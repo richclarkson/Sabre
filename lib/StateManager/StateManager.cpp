@@ -1,4 +1,5 @@
 #include "StateManager.h"
+#include "SaberSettings.h"
 
 #if defined UNIT_TEST
 #include <iostream>
@@ -159,9 +160,9 @@ StateManager::StateManager() {
   PRINT_MSG("State Manager intitialized");
   current = new NormalOff();
   colorSetting = new Neon();
-  channel = 8;
-  sensitivity = 4;
-  brightness = 4;
+  if (SaberSettings.hasNoValues()) {
+    this->resetSettings();
+  }
 }
 
 void StateManager::tap() { current->tap(this); }
@@ -173,30 +174,30 @@ void StateManager::advanceColor() { colorSetting->press(this); }
 void StateManager::advanceChannel() {
   this->channel++;
   if (this->channel > 8) {
-    this->channel = 0;
+    this->channel = 1;
   }
-  // TODO: save this value to EEPROM
+  SaberSettings.setChannels(this->channel);
 }
 
 void StateManager::advanceSensitivity() {
   this->sensitivity++;
   if (this->sensitivity >= 8) {
-    this->sensitivity = 0;
+    this->sensitivity = 1;
   }
-  // TODO: save this value to EEPROM
+  SaberSettings.setSensitivity(this->sensitivity);
 }
 
 void StateManager::advanceBrightness() {
   this->brightness++;
   if (this->brightness >= 8) {
-    this->brightness = 0;
+    this->brightness = 1;
   }
-  // TODO: save this value to EEPROM
+  SaberSettings.setBrightness(this->brightness);
 }
 
 void StateManager::resetSettings() {
-  this->channel = 0;
-  this->sensitivity = 0;
-  this->brightness = 0;
-  // TODO: Saves values to EEPROM
+  SaberSettings.setDefaults();
+  this->channel = SaberSettings.getChannels();
+  this->sensitivity = SaberSettings.getBrightness();
+  this->brightness = SaberSettings.getBrightness();
 }
