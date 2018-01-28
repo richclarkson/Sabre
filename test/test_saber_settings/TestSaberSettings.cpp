@@ -1,4 +1,4 @@
-#ifdef UNIT_TEST
+#if defined(UNIT_TEST) && defined(ARDUINO)
 
 #include "StateManager.h"
 #include <unity.h>
