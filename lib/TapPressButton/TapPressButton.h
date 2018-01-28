@@ -1,15 +1,15 @@
-#ifndef TapPressButton_h
+#ifndef TapPressButton_h  //guard - housekeeping, saying that if already included don't the rest of this code
 #define TapPressButton_h
 
-class TapPressButton {
-public:
+class TapPressButton {    //encapsulated code
+public:   // interface - useable in main
   TapPressButton();
   TapPressButton(int tap_threshold, int tap_length, int press_threshold, int press_length);
   void update(bool input, unsigned long timerVal);
   bool isTap();
   bool isPress();
 
-private:
+private:  // internal inner workings
   bool currentButtonState;
   bool prevButtonState;
   bool stateHasChanged();
