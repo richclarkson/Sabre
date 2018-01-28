@@ -29,6 +29,41 @@ void test_set_settings() {
   TEST_ASSERT_EQUAL(8, sm.getChannel());
 }
 
+void test_advance_brightness_to_rollover() {
+    sm.resetSettings();
+    TEST_ASSERT_EQUAL(4, sm.getBrightness());
+    sm.advanceBrightness();
+    TEST_ASSERT_EQUAL(5, sm.getBrightness());
+    sm.advanceBrightness();
+    TEST_ASSERT_EQUAL(6, sm.getBrightness());
+    sm.advanceBrightness();
+    TEST_ASSERT_EQUAL(7, sm.getBrightness());
+    sm.advanceBrightness();
+    TEST_ASSERT_EQUAL(1, sm.getBrightness());
+    sm.advanceBrightness();
+    TEST_ASSERT_EQUAL(2, sm.getBrightness());
+}
+
+void test_advance_channel_to_rollover() {
+    sm.resetSettings();
+    TEST_ASSERT_EQUAL(8, sm.getChannel());
+    sm.advanceChannel();
+    TEST_ASSERT_EQUAL(1, sm.getChannel());
+}
+
+void test_advance_sensitivity_to_rollover() {
+    sm.resetSettings();
+    TEST_ASSERT_EQUAL(4, sm.getSensitivity());
+    sm.advanceSensitivity();
+    TEST_ASSERT_EQUAL(5, sm.getSensitivity());
+    sm.advanceSensitivity();
+    TEST_ASSERT_EQUAL(6, sm.getSensitivity());
+    sm.advanceSensitivity();
+    TEST_ASSERT_EQUAL(7, sm.getSensitivity());
+    sm.advanceSensitivity();
+    TEST_ASSERT_EQUAL(1, sm.getSensitivity());
+}
+
 void setup() {
 
   UNITY_BEGIN();
@@ -36,6 +71,9 @@ void setup() {
 
   RUN_TEST(test_settings_exist);
   RUN_TEST(test_set_settings);
+  RUN_TEST(test_advance_brightness_to_rollover);
+  RUN_TEST(test_advance_channel_to_rollover);
+  RUN_TEST(test_advance_sensitivity_to_rollover);
 
   UNITY_END();
 }
