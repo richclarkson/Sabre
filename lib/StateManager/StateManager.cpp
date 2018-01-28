@@ -172,6 +172,10 @@ StateManager::StateManager() {
   colorSetting = new Neon();
   if (SaberSettings.hasNoValues()) {
     this->resetSettings();
+  } else {
+    this->channel = SaberSettings.getChannels();
+    this->sensitivity = SaberSettings.getSensitivity();
+    this->brightness = SaberSettings.getBrightness();
   }
 }
 
@@ -208,7 +212,7 @@ void StateManager::advanceBrightness() {
 void StateManager::resetSettings() {
   SaberSettings.setDefaults();
   this->channel = SaberSettings.getChannels();
-  this->sensitivity = SaberSettings.getBrightness();
+  this->sensitivity = SaberSettings.getSensitivity();
   this->brightness = SaberSettings.getBrightness();
 }
 

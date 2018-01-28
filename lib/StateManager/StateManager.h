@@ -8,9 +8,9 @@
 class StateManager {
   class State *current;
   class State *colorSetting;
-  int channel;
-  int sensitivity;
-  int brightness;
+  char channel;
+  char sensitivity;
+  char brightness;
   void (*fftCallBack) ();
   void (*levelCallback) ();
   float* levelValPtr;
