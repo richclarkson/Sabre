@@ -19,20 +19,21 @@ AudioConnection          patchCord2(i2s1, peak1);
 // GUItool: end automatically generated code
 
 
-// An array to hold the 16 frequency bands  - changed to 8
+// An array to hold the 8 frequency bands
 float level[8];
+float prevLevel[8];
+
+ int scale = 1024;
 
 
   // This is low-level noise that's subtracted from each frequency band:
  static const uint8_t noise[8] = {
-    5, 6, 10, 18, 30, 35, 55, 20
+    2, 1, 1, 1, 3, 6, 4, 4     //  5, 6, 10, 18, 30, 35, 55, 20
   };
+  
 
-
-// This array holds the on-screen levels.  When the signal drops quickly,
-// these are used to lower the on-screen level 1 bar per update, which
-// looks more pleasing to corresponds to human sound perception.
-int   shown[16];
+  int upperLimit = 1024;  // set the peak limit, lower = more sensitive but more clipping
+  int lowerLimit = 0;     // set the lower threshold, lower = more sensitive but more noise
 
 
 
@@ -40,7 +41,10 @@ void setup() {
   // Audio requires memory to work.
   AudioMemory(12);
   Serial.begin(9600);
-  
+
+  for (int i=0; i<8; i++) {   prevLevel[i] = 0;  }  // clear out prevLevel values
+    
+
 
 }
 
@@ -74,14 +78,16 @@ void loop() {
 
     // merged 16 levels into 8      // color on serial plotter
 
-    level[0] =  fft1024.read(0, 1);  //dark blue
-    level[1] =  fft1024.read(2, 6);  // red
-    level[2] =  fft1024.read(7, 15);  // green
-    level[3] =  fft1024.read(16, 32);  // orange
-    level[4] =  fft1024.read(33, 66);  // purple
-    level[5] = fft1024.read(67, 131);  // grey
+    level[0] =  fft1024.read(0,1);  //dark blue
+    level[1] =  fft1024.read(2);  // red
+    level[2] =  fft1024.read(3,4);  // green
+    level[3] =  fft1024.read(5,8);  // orange
+    level[4] =  fft1024.read(9,32);  // purple
+    level[5] = fft1024.read(33, 131);  // grey
     level[6] = fft1024.read(132, 257); // light blue
-    level[7] = fft1024.read(258, 359);  //black
+    level[7] = fft1024.read(258, 511);  //black
+
+
 
 
 
@@ -94,13 +100,26 @@ void loop() {
 
       //Serial.print(level[i]);
       
-      level[i] = level[i] * 10000;  // scalling
+      level[i] = level[i] * scale;  // scalling
       level[i] = level[i] - noise[i];     // remove noise
 
-      if (level[i] < 0){ level[i] = 0; }
+      if (level[i] > upperLimit){ level[i] = upperLimit;  }   // limiting
+      if (level[i] < lowerLimit){ level[i] = 0; }      // limiting
 
-      Serial.print(level[i]);
-      //Serial.print(shown[i]);
+      if (level[i] > prevLevel[i]){  prevLevel[i] = level[i];   }   //falling
+
+      else { 
+        
+        prevLevel[i] --; 
+        
+        }
+
+       if (prevLevel[i] < 0){ prevLevel[i] = 0; }      // limiting
+
+
+      //Serial.print(level[i]);
+      Serial.print(prevLevel[i]);
+
       Serial.print(" ");
 
     }
@@ -108,18 +127,20 @@ void loop() {
     
     if (peak1.available()) {
      
-      int monoPeak = peak1.read() * 10000;  //*30
-      int smoothed = monoPeak - 16;
+      float monoPeak = peak1.read() * scale;  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
+      float smoothed = monoPeak - 16;
       if (smoothed < 0){ 
         smoothed = 0; }
       
-      //Serial.print(monoPeak);
+      Serial.print(monoPeak);
+      Serial.print("     ");
+      //Serial.print(smoothed);
       //Serial.print("     ");
-      Serial.println(smoothed);
-      
     }
     
-    Serial.println("     ");
+    Serial.println(upperLimit);
+    //Serial.println(200);
+    //Serial.println("     ");
   } 
 }
 
