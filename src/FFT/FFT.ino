@@ -7,20 +7,9 @@
 
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=139,91
-//AudioMixer4              mixer1;         //xy=312,134
-//AudioOutputI2S           i2s2;           //xy=392,32
 AudioAnalyzeFFT1024      fft1024;        //xy=467,147
 AudioConnection          patchCord1(i2s1, 0, fft1024, 0);
-//AudioConnection          patchCord2(i2s1, 0, i2s2, 0);
-//AudioConnection          patchCord3(i2s1, 1, mixer1, 1);
-//AudioConnection          patchCord4(i2s1, 1, i2s2, 1);
-//AudioConnection          patchCord5(mixer1, fft1024);
-//AudioControlSGTL5000     audioShield;    //xy=366,225
 // GUItool: end automatically generated code
-
-
-//const int myInput = AUDIO_INPUT_LINEIN;
-//const int myInput = AUDIO_INPUT_MIC;
 
 
 // The scale sets how much sound is needed in each frequency range to
@@ -37,40 +26,23 @@ int   shown[16];
 
 
 
-// Use the LiquidCrystal library to display the spectrum
-//
-//LiquidCrystal lcd(0, 1, 2, 3, 4, 5);
-//byte bar1[8] = {0,0,0,0,0,0,0,255};
-//byte bar2[8] = {0,0,0,0,0,0,255,255};        // 8 bar graph
-//byte bar3[8] = {0,0,0,0,0,255,255,255};      // custom
-//byte bar4[8] = {0,0,0,0,255,255,255,255};    // characters
-//byte bar5[8] = {0,0,0,255,255,255,255,255};
-//byte bar6[8] = {0,0,255,255,255,255,255,255};
-//byte bar7[8] = {0,255,255,255,255,255,255,255};
-//byte bar8[8] = {255,255,255,255,255,255,255,255};
-
-
 void setup() {
   // Audio requires memory to work.
   AudioMemory(12);
 
-  // Enable the audio shield and set the output volume.
-
-  // configure the mixer to equally add left & right
-//  mixer1.gain(0, 0.5);
-//  mixer1.gain(1, 0.5);
-
-  // pin 21 will select rapid vs animated display
-  //pinMode(21, INPUT_PULLUP);
 }
 
 
 void loop() {
   if (fft1024.available()) {
+    
     // read the 512 FFT frequencies into 16 levels
     // music is heard in octaves, but the FFT data
     // is linear, so for the higher octaves, read
     // many FFT bins together.
+    
+    // these are the example 16 levels 
+    
 //    level[0] =  fft1024.read(0);
 //    level[1] =  fft1024.read(1);
 //    level[2] =  fft1024.read(2, 3);
@@ -88,6 +60,8 @@ void loop() {
 //    level[14] = fft1024.read(258, 359);
 //    level[15] = fft1024.read(360, 511);
 
+    // merged 16 levels into 8
+
     level[0] =  fft1024.read(0, 1);
     level[1] =  fft1024.read(2, 6);
     level[2] =  fft1024.read(7, 15);
@@ -96,6 +70,7 @@ void loop() {
     level[5] = fft1024.read(67, 131);
     level[6] = fft1024.read(132, 257);
     level[7] = fft1024.read(258, 359);
+    
     // See this conversation to change this to more or less than 16 log-scaled bands?
     // https://forum.pjrc.com/threads/32677-Is-there-a-logarithmic-function-for-FFT-bin-selection-for-any-given-of-bands
 
