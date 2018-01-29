@@ -1,3 +1,7 @@
+
+//Adapted from: Spectrum Analyzer Basic Example
+
+
 //#include <LiquidCrystal.h>
 #include <Audio.h>
 #include <Wire.h>
@@ -16,8 +20,15 @@ AudioConnection          patchCord1(i2s1, 0, fft1024, 0);
 // show all 8 bars.  Higher numbers are more sensitive.
 float scale = 1000.0;
 
-// An array to hold the 16 frequency bands
-float level[16];
+// An array to hold the 16 frequency bands  - changed to 8
+float level[8];
+
+
+  // This is low-level noise that's subtracted from each level:
+ static const uint8_t noise[8] = {
+    5, 6, 10, 18, 30, 35, 55, 20
+  };
+
 
 // This array holds the on-screen levels.  When the signal drops quickly,
 // these are used to lower the on-screen level 1 bar per update, which
@@ -60,16 +71,19 @@ void loop() {
 //    level[14] = fft1024.read(258, 359);
 //    level[15] = fft1024.read(360, 511);
 
-    // merged 16 levels into 8
+    // merged 16 levels into 8      // color on serial plotter
 
-    level[0] =  fft1024.read(0, 1);
-    level[1] =  fft1024.read(2, 6);
-    level[2] =  fft1024.read(7, 15);
-    level[3] =  fft1024.read(16, 32);
-    level[4] =  fft1024.read(33, 66);
-    level[5] = fft1024.read(67, 131);
-    level[6] = fft1024.read(132, 257);
-    level[7] = fft1024.read(258, 359);
+    level[0] =  fft1024.read(0, 1);  //dark blue
+    level[1] =  fft1024.read(2, 6);  // red
+    level[2] =  fft1024.read(7, 15);  // green
+    level[3] =  fft1024.read(16, 32);  // orange
+    level[4] =  fft1024.read(33, 66);  // purple
+    level[5] = fft1024.read(67, 131);  // grey
+    level[6] = fft1024.read(132, 257); // light blue
+    level[7] = fft1024.read(258, 359);  //black
+
+
+
     
     // See this conversation to change this to more or less than 16 log-scaled bands?
     // https://forum.pjrc.com/threads/32677-Is-there-a-logarithmic-function-for-FFT-bin-selection-for-any-given-of-bands
@@ -79,7 +93,10 @@ void loop() {
 
       //Serial.print(level[i]);
       
-      level[i] = level[i] * 10000;
+      level[i] = level[i] * 10000;  // scalling
+      level[i] = level[i] - noise[i];     // remove noise
+
+      if (level[i] < 0){ level[i] = 0; }
       
 
       // TODO: conversion from FFT data to display bars should be
@@ -99,7 +116,7 @@ void loop() {
       Serial.print(" ");
 
     }
-    Serial.println(0);
+    Serial.println("  ");
   } 
 }
 
