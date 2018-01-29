@@ -12,7 +12,10 @@
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=139,91
 AudioAnalyzeFFT1024      fft1024;        //xy=467,147
+AudioAnalyzePeak         peak1;          //xy=317,123
 AudioConnection          patchCord1(i2s1, 0, fft1024, 0);
+AudioConnection          patchCord2(i2s1, peak1);
+
 // GUItool: end automatically generated code
 
 
@@ -24,7 +27,7 @@ float scale = 1000.0;
 float level[8];
 
 
-  // This is low-level noise that's subtracted from each level:
+  // This is low-level noise that's subtracted from each frequency band:
  static const uint8_t noise[8] = {
     5, 6, 10, 18, 30, 35, 55, 20
   };
@@ -40,6 +43,8 @@ int   shown[16];
 void setup() {
   // Audio requires memory to work.
   AudioMemory(12);
+  Serial.begin(9600);
+  
 
 }
 
@@ -116,7 +121,22 @@ void loop() {
       Serial.print(" ");
 
     }
-    Serial.println("  ");
+
+    
+    if (peak1.available()) {
+     
+      int monoPeak = peak1.read() * 10000;  //*30
+      int smoothed = monoPeak - 16;
+      if (smoothed < 0){ 
+        smoothed = 0; }
+      
+      //Serial.print(monoPeak);
+      //Serial.print("     ");
+      Serial.println(smoothed);
+      
+    }
+    
+    Serial.println("     ");
   } 
 }
 
