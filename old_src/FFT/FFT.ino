@@ -7,11 +7,9 @@
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s1;           //xy=139,91
 AudioAnalyzeFFT1024      fft1024;        //xy=467,147
-AudioAnalyzePeak         peak1;          //xy=317,123
 AudioAnalyzeRMS          rms1;           //xy=411,381
 AudioConnection          patchCord1(i2s1, 0, fft1024, 0);
-AudioConnection          patchCord2(i2s1, peak1);
-AudioConnection          patchCord3(i2s1, 0, rms1, 0);
+AudioConnection          patchCord2(i2s1, 0, rms1, 0);
 // GUItool: end automatically generated code
 
 
@@ -26,7 +24,7 @@ static const uint8_t noise[8] = {
   2, 1, 1, 1, 3, 6, 4, 4            // numbers generated using serial plotter at room tone
 };
 
-int sensitivity = 4;  // 0-8 where 8 = maximum sensitivity
+int sensitivity = 5;  // 0-8 where 8 = maximum sensitivity
 
 // Upper limit is used to clip readings off at a certian point and set the scale to map to LEDs
 static const int upperLimit[8] = {
@@ -35,7 +33,7 @@ static const int upperLimit[8] = {
 
 // Lower threshold is used to make the readings more 'jumpy' at lower sensitvities.
 static const int lowerThreshold[8] = {
-  200, 50, 20, 10, 7, 5, 2, 0  
+  200, 20, 10, 0, 0, 0, 0, 0  
 };
 
 
@@ -91,27 +89,9 @@ void loop() {
 
 
       //Serial.print(level[i]);
-      //Serial.print(prevLevel[i]);
+      //Serial.print(prevLevel[i]);   // print falling value
       //Serial.print(" ");
 
-    }
-
-
-    if (peak1.available()) {
-
-      float monoPeak = peak1.read() * scale;  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
-
-      monoPeak = monoPeak - 2;                // remove noise
-
-      if (monoPeak > upperLimit[sensitivity]) {
-        monoPeak = upperLimit[sensitivity];   // limiting
-      }
-      if (monoPeak < lowerThreshold[sensitivity]) {
-        monoPeak = 0;                         // limiting
-      }
-
-      Serial.print(monoPeak);
-      Serial.print("     ");
     }
 
 
