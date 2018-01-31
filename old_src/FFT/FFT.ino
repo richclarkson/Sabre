@@ -14,26 +14,27 @@ AudioConnection          patchCord2(i2s1, 0, rms1, 0);
 
 
 // An array to hold the 8 frequency bands
-float level[8];
-float prevLevel[8] = {0, 0, 0, 0, 0, 0, 0, 0};   // previous level reading used for falling dot and other music modes
+float level[8];    //TODO put bin numbers into an array here   
 
-int scale = 1024;
 
 // This is low-level noise that's subtracted from each frequency band:
-static const uint8_t noise[8] = {
-  2, 1, 1, 1, 3, 6, 4, 4            // numbers generated using serial plotter at room tone
+static const int noise[8] = {   // numbers generated using serial plotter at room tone 
+  20, 05, 04, 06, 22, 64, 68, 89            // these are converted x 0.0001 later on before subtraction
 };
 
-int sensitivity = 5;  // 0-8 where 8 = maximum sensitivity
+int sensitivity = 4;  // 0-8 where 8 = maximum sensitivity
+
+
+static const int scale[8] = {
+  300, 600, 1000, 2000, 5000, 10000, 15000, 20000   // sensitivity setting 2
+  };
 
 // Upper limit is used to clip readings off at a certian point and set the scale to map to LEDs
-static const int upperLimit[8] = {
-  1024, 500, 250, 100, 50, 25, 10, 5     
-};
+const int upperLimit = 115;
 
 // Lower threshold is used to make the readings more 'jumpy' at lower sensitvities.
 static const int lowerThreshold[8] = {
-  200, 20, 10, 0, 0, 0, 0, 0  
+  3, 2, 1, 0, 0, 0, 0, 0  
 };
 
 
@@ -51,46 +52,31 @@ void loop() {
 
     // read the 512 FFT frequencies into 8 levels
 
-    level[0] =  fft1024.read(0, 1); //dark blue
+    level[0] =  fft1024.read(0, 1); //dark blue       // reading comes in a two decimal value from 0.00 to 1.00
     level[1] =  fft1024.read(2);  // red
     level[2] =  fft1024.read(3, 4); // green
     level[3] =  fft1024.read(5, 8); // orange
-    level[4] =  fft1024.read(9, 32); // purple
-    level[5] =  fft1024.read(33, 131);  // grey
-    level[6] =  fft1024.read(132, 257); // light blue
-    level[7] =  fft1024.read(258, 511);  //black
+    level[4] =  fft1024.read(9, 26); // purple
+    level[5] =  fft1024.read(27, 98);  // grey
+    level[6] =  fft1024.read(99, 226); // light blue
+    level[7] =  fft1024.read(227, 511);  //black
 
 
     for (int i = 0; i < 8; i++) {
+        
+        level[i] = level[i] - (noise[i]*0.0001);             // remove noise
+        level[i] = level[i] * scale[sensitivity];                // scalling
+//
+//      if (level[i] > upperLimit) {
+//        level[i] = upperLimit;       // limiting
+//      }
+//      if (level[i] < lowerThreshold[sensitivity]) {
+//        level[i] = 0;                             // limiting
+//      }
 
-      level[i] = level[i] * scale;                // scalling
-      level[i] = level[i] - noise[i];             // remove noise
-
-      if (level[i] > upperLimit[sensitivity]) {
-        level[i] = upperLimit[sensitivity];       // limiting
-      }
-      if (level[i] < lowerThreshold[sensitivity]) {
-        level[i] = 0;                             // limiting
-      }
-
-      if (level[i] > prevLevel[i]) {
-        prevLevel[i] = level[i];                  //falling
-      }
-
-      else {
-
-        prevLevel[i] --;
-
-      }
-
-      if (prevLevel[i] < 0) {
-        prevLevel[i] = 0;                        // limiting
-      }
-
-
-      //Serial.print(level[i]);
-      //Serial.print(prevLevel[i]);   // print falling value
-      //Serial.print(" ");
+     
+      Serial.print(level[i]);
+      Serial.print(" ");
 
     }
 
@@ -99,29 +85,51 @@ void loop() {
 
     if (rms1.available()) {
 
-      float monoRms = rms1.read() * scale;  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
-
+      int monoRms = rms1.read() * scale[sensitivity];  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
+      
       //monoRms = monoRms - 2;                   // remove noise
 
-      if (monoRms > upperLimit[sensitivity]) {
-        monoRms = upperLimit[sensitivity];      // limiting
+      if (monoRms > upperLimit) {
+        monoRms = upperLimit;      // limiting
       }
       if (monoRms < lowerThreshold[sensitivity]) {
         monoRms = 0;                            // limiting
       }
 
-      Serial.print(monoRms);
-      Serial.print("     ");
+      //Serial.print(monoRms);
+      //Serial.print("     ");
     }
 
 
 
-
-
-    Serial.println(upperLimit[sensitivity]);
+     //Serial.print(level[7]);
+     //Serial.print("     ");
+   
+    Serial.println(upperLimit);
     //Serial.println(200);
     //Serial.println("     ");
+
   }
 }
+
+//void RMS(){
+//    if (rms1.available()) {
+//
+//      float monoRms = rms1.read() * scale;  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
+//
+//      //monoRms = monoRms - 2;                   // remove noise
+//
+//      if (monoRms > upperLimit[sensitivity]) {
+//        monoRms = upperLimit[sensitivity];      // limiting
+//      }
+//      if (monoRms < lowerThreshold[sensitivity]) {
+//        monoRms = 0;                            // limiting
+//      }
+//
+//      Serial.print(monoRms);
+//      Serial.print("     ");
+//    }
+//  }
+
 
 
