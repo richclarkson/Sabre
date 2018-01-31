@@ -18,23 +18,23 @@ float level[8];    //TODO put bin numbers into an array here
 
 
 // This is low-level noise that's subtracted from each frequency band:
-static const int noise[8] = {   // numbers generated using serial plotter at room tone 
+static const int noise[8] = {   // numbers generated using serial plotter at room tone at x10000 factor
   20, 05, 04, 06, 22, 64, 68, 89            // these are converted x 0.0001 later on before subtraction
 };
 
-int sensitivity = 4;  // 0-8 where 8 = maximum sensitivity
+int sensitivity = 7;  // 0-8 where 8 = maximum sensitivity
 
 
-static const int scale[8] = {
-  300, 600, 1000, 2000, 5000, 10000, 15000, 20000   // sensitivity setting 2
+static const int scale[9] = {
+  300, 600, 1000, 2000, 5000, 10000, 15000, 50000, 100000   // sensitivity setting (mulitplicatio factor)
   };
 
-// Upper limit is used to clip readings off at a certian point and set the scale to map to LEDs
-const int upperLimit = 115;
+// Upper limit is used to clip readings off at a certian point set this as number of LEDs
+const int upperLimit = 115; 
 
 // Lower threshold is used to make the readings more 'jumpy' at lower sensitvities.
-static const int lowerThreshold[8] = {
-  3, 2, 1, 0, 0, 0, 0, 0  
+static const int lowerThreshold[9] = {
+  3, 2, 1, 0, 0, 0, 0, 0, 0  
 };
 
 
@@ -66,17 +66,17 @@ void loop() {
         
         level[i] = level[i] - (noise[i]*0.0001);             // remove noise
         level[i] = level[i] * scale[sensitivity];                // scalling
-//
-//      if (level[i] > upperLimit) {
-//        level[i] = upperLimit;       // limiting
-//      }
-//      if (level[i] < lowerThreshold[sensitivity]) {
-//        level[i] = 0;                             // limiting
-//      }
+
+      if (level[i] > upperLimit) {
+        level[i] = upperLimit;       // limiting
+      }
+      if (level[i] < lowerThreshold[sensitivity]) {
+        level[i] = 0;                             // limiting
+      }
 
      
-      Serial.print(level[i]);
-      Serial.print(" ");
+      //Serial.print(level[i]);
+      //Serial.print(" ");
 
     }
 
@@ -85,10 +85,8 @@ void loop() {
 
     if (rms1.available()) {
 
-      int monoRms = rms1.read() * scale[sensitivity];  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
+      int monoRms = (rms1.read()-0.0006) * scale[sensitivity];  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
       
-      //monoRms = monoRms - 2;                   // remove noise
-
       if (monoRms > upperLimit) {
         monoRms = upperLimit;      // limiting
       }
@@ -96,40 +94,14 @@ void loop() {
         monoRms = 0;                            // limiting
       }
 
-      //Serial.print(monoRms);
-      //Serial.print("     ");
+      Serial.print(monoRms);
+      Serial.print("     ");
     }
 
-
-
-     //Serial.print(level[7]);
-     //Serial.print("     ");
    
-    Serial.println(upperLimit);
-    //Serial.println(200);
-    //Serial.println("     ");
-
+    Serial.println(upperLimit);   // useful when stopping the serial plotter from autoscalling
   }
 }
-
-//void RMS(){
-//    if (rms1.available()) {
-//
-//      float monoRms = rms1.read() * scale;  //peak1.read outputs as a decimal from 1 (max) to 0 (min)
-//
-//      //monoRms = monoRms - 2;                   // remove noise
-//
-//      if (monoRms > upperLimit[sensitivity]) {
-//        monoRms = upperLimit[sensitivity];      // limiting
-//      }
-//      if (monoRms < lowerThreshold[sensitivity]) {
-//        monoRms = 0;                            // limiting
-//      }
-//
-//      Serial.print(monoRms);
-//      Serial.print("     ");
-//    }
-//  }
 
 
 
