@@ -36,6 +36,16 @@ static const int noise[8] = {   // numbers generated using serial plotter at roo
   20, 05, 04, 06, 22, 64, 68, 89            // these are converted x 0.0001 later on before subtraction
 };
 
+int channel = 1;
+
+static const int binStart[8] = {   // 
+  0, 2, 3, 5, 9, 27, 99, 227            // 
+};
+
+static const int binEnd[8] = {   // 
+  1, 2, 4, 8, 26, 98, 226, 511            // 
+};
+
 int sensitivity = 5;  // 0-8 where 8 = maximum sensitivity
 
 static const int scale[9] = {
@@ -52,11 +62,7 @@ const int upperLimit = 115;
 
 
 
-// Button Varriables:
 
-int channel = 9;
-//int buttonStateChannel = 0;
-//int buttonStateSensitivity = 0; 
 
 
 void setup() {
@@ -68,57 +74,48 @@ void setup() {
 
 
 void loop() {
-  if (fft1024.available()) {
 
-    // read the 512 FFT frequencies into 8 levels
+    checkbuttons();
 
-    reading[0] =  fft1024.read(0, 1); //dark blue       // reading comes in at between 0.0 to 1.0
-    reading[1] =  fft1024.read(2);  // red
-    reading[2] =  fft1024.read(3, 4); // green
-    reading[3] =  fft1024.read(5, 8); // orange
-    reading[4] =  fft1024.read(9, 26); // purple
-    reading[5] =  fft1024.read(27, 98);  // grey
-    reading[6] =  fft1024.read(99, 226); // light blue
-    reading[7] =  fft1024.read(227, 511);  //black
-
-
-    for (int i = 0; i < 8; i++) {
-
-      reading[i] = reading[i] - (noise[i] * 0.0001);           // remove noise
-      level[i] = (reading[i] * scale[sensitivity]) * eq[i];                // scale
-
-      if (level[i] > upperLimit) {
-        level[i] = upperLimit;       // limiting
-      }
-      if (level[i] < 0) {
-        level[i] = 0;                             // limiting
-      }
-
-
-      //Serial.print(level[i]);
-      //Serial.print(" ");
-
+    if (channel < 8){     // channel specified and not ripple mode
+      FFTsingle();
+      Serial.print(level[channel]);
+      Serial.print(" ");
     }
 
-
-
-
-    if (rms1.available()) {
-
-      monoRms = (rms1.read() - 0.0006) * scale[sensitivity];     // remove noise and scale
-
-      if (monoRms > upperLimit) {
-        monoRms = upperLimit;      // limiting
+    else if (channel == 8){           // ripple mode
+      FFTall();
+      for (int i = 0; i < 8; i++) {
+        Serial.print(level[i]);
+        Serial.print(" ");
       }
-      if (monoRms < 0) {
-        monoRms = 0;                            // limiting
-      }
-
-      //Serial.print(monoRms);
-      //Serial.print("     ");
     }
 
+    else if (channel > 8){         //  channel not specified and not ripple mode
+      RMS();
+      Serial.print(monoRms);
+      Serial.print("     ");
+    }
+    
 
+    Serial.print(channel*10);      // feedback for testing rig
+    Serial.print("     ");
+    Serial.print(sensitivity*10);  // feedback for testing rig
+    Serial.print("     ");
+    Serial.println(upperLimit);    // useful when stopping the serial plotter from autoscalling
+    delay(10);
+  }
+
+
+
+
+
+
+
+  
+
+
+  void checkbuttons(){
     int buttonState1 = digitalRead(2);
     if (buttonState1 == LOW){
       channel++;
@@ -135,33 +132,82 @@ void loop() {
       //Serial.println(sensitivity);
       delay(300);
     }
-
-
-    if (channel < 8){
-      Serial.print(level[channel]);
-      Serial.print(" ");
-    }
-//
-//    else if (channel == 8){
-//      for (int i = 0; i < 8; i++) {
-//        Serial.print(level[i]);
-//        Serial.print(" ");
-//      }
-//    }
-
-    else if (channel > 7){
-      Serial.print(monoRms);
-      Serial.print("     ");
-    }
-    
-
-    Serial.print(channel*10);
-    Serial.print("     ");
-    Serial.print(sensitivity*10);
-    Serial.print("     ");
-    Serial.println(upperLimit);   // useful when stopping the serial plotter from autoscalling
   }
-}
+
+
+
+  void RMS(){
+      if (rms1.available()) {
+
+      monoRms = (rms1.read() - 0.0006) * scale[sensitivity];     // remove noise and scale
+
+      if (monoRms > upperLimit) {
+        monoRms = upperLimit;      // limiting
+      }
+      if (monoRms < 0) {
+        monoRms = 0;                            // limiting
+      }
+
+      //Serial.print(monoRms);
+      //Serial.print("     ");
+    }
+  }
+
+
+  void FFTall(){
+    if (fft1024.available()) {
+
+    // read the 512 FFT frequencies into 8 levels
+
+    reading[0] =  fft1024.read(0, 1); //dark blue       // reading comes in at between 0.0 to 1.0
+    reading[1] =  fft1024.read(2);  // red
+    reading[2] =  fft1024.read(3, 4); // green
+    reading[3] =  fft1024.read(5, 8); // orange
+    reading[4] =  fft1024.read(9, 26); // purple
+    reading[5] =  fft1024.read(27, 98);  // grey
+    reading[6] =  fft1024.read(99, 226); // light blue
+    reading[7] =  fft1024.read(227, 511);  //black
+
+    for (int i = 0; i < 8; i++) {
+
+      reading[i] = reading[i] - (noise[i] * 0.0001);           // remove noise
+      level[i] = (reading[i] * scale[sensitivity]) * eq[i];                // scale
+
+      if (level[i] > upperLimit) {
+        level[i] = upperLimit;       // limiting
+      }
+      if (level[i] < 0) {
+        level[i] = 0;                             // limiting
+      }
+
+      //Serial.print(level[i]);
+      //Serial.print(" ");
+    }
+  }
+ }
+
+
+  void FFTsingle(){
+    if (fft1024.available()) {
+
+      int i = channel;
+
+      reading[i] =  fft1024.read(binStart[i], binEnd[i]); 
+
+      reading[i] = reading[i] - (noise[i] * 0.0001);           // remove noise
+      level[i] = (reading[i] * scale[sensitivity]) * eq[i];                // scale
+
+      if (level[i] > upperLimit) {
+        level[i] = upperLimit;       // limiting
+      }
+      if (level[i] < 0) {
+        level[i] = 0;                             // limiting
+      }
+
+      //Serial.print(level[i]);
+      //Serial.print(" ");
+  }
+ }
 
 
 
