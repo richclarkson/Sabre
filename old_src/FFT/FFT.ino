@@ -28,6 +28,7 @@ AudioConnection          patchCord2(i2s1, 0, rms1, 0);
 // An array to hold the 8 frequency bands
 float reading[8];    //TODO put bin numbers into an array here
 int level[8];
+int monoRms = 0;
 
 
 // This is low-level noise that's subtracted from each frequency band:
@@ -35,27 +36,34 @@ static const int noise[8] = {   // numbers generated using serial plotter at roo
   20, 05, 04, 06, 22, 64, 68, 89            // these are converted x 0.0001 later on before subtraction
 };
 
-int sensitivity = 7;  // 0-8 where 8 = maximum sensitivity
+int sensitivity = 5;  // 0-8 where 8 = maximum sensitivity
 
 static const int scale[9] = {
-  300, 600, 1000, 2000, 5000, 10000, 15000, 50000, 100000   // sensitivity setting (mulitplication factor)
+  300, 1000, 2000, 5000, 7500, 10000, 15000, 50000, 100000   // sensitivity setting (mulitplication factor)
 };
+
+float eq[8] = {
+  1.5, 1.0, 1.0, 0.6, 1.0, 1.5, 2.0, 4.0   // individual channel scaling factor
+};
+
 
 // Upper limit is used to clip readings off at a certian point set this as number of LEDs
 const int upperLimit = 115;
 
-// Lower threshold is used to make the readings more 'jumpy' at lower sensitvities.
-static const int lowerThreshold[9] = {
-  3, 2, 1, 0, 0, 0, 0, 0, 0
-};
 
 
+// Button Varriables:
 
+int channel = 9;
+//int buttonStateChannel = 0;
+//int buttonStateSensitivity = 0; 
 
 
 void setup() {
   AudioMemory(12);     // Audio requires memory to work.
   Serial.begin(9600);
+  pinMode(2, INPUT_PULLUP);
+  pinMode(3, INPUT_PULLUP);
 }
 
 
@@ -77,12 +85,12 @@ void loop() {
     for (int i = 0; i < 8; i++) {
 
       reading[i] = reading[i] - (noise[i] * 0.0001);           // remove noise
-      level[i] = reading[i] * scale[sensitivity];                // scale
+      level[i] = (reading[i] * scale[sensitivity]) * eq[i];                // scale
 
       if (level[i] > upperLimit) {
         level[i] = upperLimit;       // limiting
       }
-      if (level[i] < lowerThreshold[sensitivity]) {
+      if (level[i] < 0) {
         level[i] = 0;                             // limiting
       }
 
@@ -97,20 +105,60 @@ void loop() {
 
     if (rms1.available()) {
 
-      int monoRms = (rms1.read() - 0.0006) * scale[sensitivity];     // remove noise and scale
+      monoRms = (rms1.read() - 0.0006) * scale[sensitivity];     // remove noise and scale
 
       if (monoRms > upperLimit) {
         monoRms = upperLimit;      // limiting
       }
-      if (monoRms < lowerThreshold[sensitivity]) {
+      if (monoRms < 0) {
         monoRms = 0;                            // limiting
       }
 
-      Serial.print(monoRms);
-      Serial.print("     ");
+      //Serial.print(monoRms);
+      //Serial.print("     ");
     }
 
 
+    int buttonState1 = digitalRead(2);
+    if (buttonState1 == LOW){
+      channel++;
+      if (channel > 9){ channel = 0;}
+      //Serial.println(channel);
+      delay(300);
+    }
+
+    
+    int buttonState2 = digitalRead(3);
+    if (buttonState2 == LOW){
+      sensitivity++;
+      if (sensitivity > 8){ sensitivity = 0;}
+      //Serial.println(sensitivity);
+      delay(300);
+    }
+
+
+    if (channel < 8){
+      Serial.print(level[channel]);
+      Serial.print(" ");
+    }
+//
+//    else if (channel == 8){
+//      for (int i = 0; i < 8; i++) {
+//        Serial.print(level[i]);
+//        Serial.print(" ");
+//      }
+//    }
+
+    else if (channel > 7){
+      Serial.print(monoRms);
+      Serial.print("     ");
+    }
+    
+
+    Serial.print(channel*10);
+    Serial.print("     ");
+    Serial.print(sensitivity*10);
+    Serial.print("     ");
     Serial.println(upperLimit);   // useful when stopping the serial plotter from autoscalling
   }
 }
