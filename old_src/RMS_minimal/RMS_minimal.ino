@@ -27,6 +27,9 @@
 #include <SPI.h>
 #include <SD.h>
 #include <SerialFlash.h>
+
+#define FASTLED_FORCE_SOFTWARE_SPI 1
+
 #include <FastLED.h>      // v3.1.6
 FASTLED_USING_NAMESPACE
 
@@ -60,8 +63,9 @@ void setup() {
   Serial.begin(9600);
 
   // tell FastLED about the LED strip configuration
-  //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
   FastLED.addLeds<LED_TYPE, DATA_PIN, CLK_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+
+  //FastLED.addLeds<LED_TYPE,7,14,COLOR_ORDER, DATA_RATE_MHZ(8)>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
 
   FastLED.setBrightness(20);  // to save your eyeballs during testing
   FastLED.show();             // clear out any old data in the LEDs
@@ -79,7 +83,7 @@ void loop() {
   }
 
   updateLEDs();
-  //delay(20);
+  delay(10);
 }
 
 
