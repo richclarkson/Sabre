@@ -1,7 +1,8 @@
 #include "AnalyzeSound.h"
+//#include "Arduino.h"
 
 AnalyzeSound::AnalyzeSound() {
-  soundLevel;
+  soundLevel = 0;
   channel = 8;  // global channel setting
   sensitivity = 4;  // global sensitivity setting
   fftArray[8];
@@ -13,6 +14,13 @@ AnalyzeSound::AnalyzeSound() {
   scale[9] = {300, 1000, 3000, 6000, 10000, 20000, 30000, 50000, 100000};
   eq[8] = {1.0, 1.0, 0.7, 0.5, 1.0, 1.0, 1.5, 2.0};
   upperLimit = 115;
+  
+  AudioInputI2S            i2s1;           //xy=139,91
+  AudioAnalyzeFFT1024      fft1024;        //xy=467,147
+  AudioAnalyzeRMS          rms1;           //xy=411,381
+  AudioConnection          patchCord1(i2s1, 0, fft1024, 0);
+  AudioConnection          patchCord2(i2s1, 0, rms1, 0);
+
 }
 
 void AnalyzeSound::analyzeLevel() {

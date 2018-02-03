@@ -14,21 +14,28 @@ unsigned long loopTime;
 bool isTouch;
 
 // Sound Library hooks & data
-int soundLevel;
-int fftArray [8];
+float soundLevel;
+//float fftArray [8];
 int fftSingle;
 
+const int FFT_RESOLUTION = 256;
+float fftArray[FFT_RESOLUTION / 2];
+
 void analyzeFFTall() {
-  // run FFT analysis function
+  // run FFT analysis function 
+  // used by Ripple Mode
   // store the resulting data to the `FFTArray` variable
 }
 
 void analyzeFFT() {
-  // run FFT analysis function
+  // run FFT analysis function 
+  // used by the Music Modes (excluding Ripple Mode) when specific channel IS set 
   // store resulting value to the `fftSingle` variable
+}
 
 void analyzeLevel() {
-  // run Level analysis function
+  // run (RMS) Level analysis function 
+  // used by the Music Modes (excluding Ripple Mode) when specific channel IS NOT set 
   // store resulting value to the `soundLevel` variable
 }
 
