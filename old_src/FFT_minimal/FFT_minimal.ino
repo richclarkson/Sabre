@@ -23,12 +23,12 @@
 
 
 #include <Audio.h>     // v1.0.5
-//#include <Wire.h>
-//#include <SPI.h>
-//#include <SD.h>
-//#include <SerialFlash.h>
-#include <NeoPixelBus.h>
-
+#include <Wire.h>
+#include <SPI.h>
+#include <SD.h>
+#include <SerialFlash.h>
+#include <FastLED.h>      // v3.1.6
+FASTLED_USING_NAMESPACE
 
 
 // GUItool: begin automatically generated code
@@ -40,24 +40,14 @@ AudioConnection          patchCord1(i2s1, 0, rms1, 0);
 int rmsReading = 2;       // store RMS reading
 int prevrmsReading = 1;   // store the previous RMS reading
 
-int NUM_LEDS = 115;
-const uint16_t PixelCount = 115;
 
 //LED Variables
-// make sure to set this to the correct pins
-const uint8_t DotClockPin = 14;
-const uint8_t DotDataPin = 7;  
-
-#define colorSaturation 128
-
-// for software bit bang
-NeoPixelBus<DotStarBgrFeature, DotStarMethod> strip(PixelCount, DotClockPin, DotDataPin);
-
-RgbColor red(colorSaturation, 0, 0);
-RgbColor green(0, colorSaturation, 0);
-RgbColor blue(0, 0, colorSaturation);
-RgbColor white(colorSaturation);
-RgbColor black(0);
+#define DATA_PIN    7 // MOSI - Green on my strand
+#define CLK_PIN     14 // SCK - Blue on my strand
+#define LED_TYPE    APA102
+#define COLOR_ORDER BRG
+#define NUM_LEDS    115
+CRGB leds[NUM_LEDS];
 
 int dot;                 // A 'dot' to float on the top
 int dotCount = 1;
@@ -69,10 +59,12 @@ void setup() {
   AudioMemory(12);     // Audio requires memory to work.
   Serial.begin(9600);
 
-      // this resets all the neopixels to an off state
-    strip.Begin();
-    strip.ClearTo(black);
-    strip.Show();
+  // tell FastLED about the LED strip configuration
+  //FastLED.addLeds<LED_TYPE,DATA_PIN,COLOR_ORDER>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+  FastLED.addLeds<LED_TYPE, DATA_PIN, CLK_PIN, COLOR_ORDER>(leds, NUM_LEDS).setCorrection( TypicalLEDStrip );
+
+  FastLED.setBrightness(20);  // to save your eyeballs during testing
+  FastLED.show();             // clear out any old data in the LEDs
 }
 
 
@@ -87,7 +79,7 @@ void loop() {
   }
 
   updateLEDs();
-  //delay(10);
+  //delay(20);
 }
 
 
@@ -112,18 +104,18 @@ void RMS() {
 
 void updateLEDs() {
   for (int led = 0; led < NUM_LEDS; led++) {  // set all LEDs to off
-    strip.SetPixelColor(led, black);
+    leds[led].setRGB( 0, 0, 0);
   }
 
   for (int led = 0; led < rmsReading; led++) {  // fill LEDs up to rmsReading with white
-    strip.SetPixelColor(led, white);
+    leds[led].setRGB( 80, 80, 80);
   }
 
   if (rmsReading > dot) {
     dot = rmsReading;  // keep a 'dot' on top of rmsReading
   }
 
-  strip.SetPixelColor(dot, blue);             // set the dot as a blue pixel
+  leds[dot].setRGB( 0, 0, 255);             // set the dot as a blue pixel
 
   if (++dotCount >= 3) {                   // make the dot fall slowly
     dotCount = 0;
@@ -131,7 +123,7 @@ void updateLEDs() {
       dot--;
     }
   }
-  strip.Show();
+  FastLED.show();
 }
 
 
