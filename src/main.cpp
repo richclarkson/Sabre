@@ -4,6 +4,7 @@
 #include <StateManager.h>
 #include <TapPressButton.h>
 #include <AnalyzeSound.h>
+#include <Audio.h>
 
 TapPressButton capSensor;
 StateManager mainState;

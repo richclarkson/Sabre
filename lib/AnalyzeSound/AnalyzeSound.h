@@ -1,6 +1,9 @@
 #ifndef AnalyzeSound_h  //guard - housekeeping, saying that if already included don't the rest of this code
 #define AnalyzeSound_h
 
+#include "Arduino.h"
+#include "Audio.h"
+
 class AnalyzeSound {    //encapsulated code
 public:   // interface - useable in main
   void analyzeFFT();

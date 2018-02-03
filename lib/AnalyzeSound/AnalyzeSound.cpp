@@ -1,13 +1,14 @@
 #include "AnalyzeSound.h"
-//#include "Arduino.h"
+#include "Arduino.h"
+#include "Audio.h"
 
 AnalyzeSound::AnalyzeSound() {
-  soundLevel = 0;
+  int soundLevel = 0;
   channel = 8;  // global channel setting
   sensitivity = 4;  // global sensitivity setting
-  fftArray[8];
-  fftSingle;
-  reading[8];
+  //fftArray[8];
+  fftSingle = 0;
+  reading[8]= { 0, 0, 0, 0, 0, 0, 0, 0 };
   noise[8] = { 20, 05, 04, 06, 22, 64, 68, 89 };
   binStart[8] = {0, 2, 3, 5, 9, 27, 99, 227 };
   binEnd[8] = {1, 2, 4, 8, 26, 98, 226, 511};
@@ -48,7 +49,7 @@ if (fft1024.available()) {
 void AnalyzeSound::FFTreading(int FFTchannel){
       reading[FFTchannel] =  fft1024.read(binStart[FFTchannel], binEnd[FFTchannel]);
       reading[FFTchannel] = reading[FFTchannel] - (noise[FFTchannel] * 0.0001);           // remove noise
-      fftArray[FFTchannel] = (reading[FFTchannel] * scale[sensitivity]) * eq[FFTchannel];                // scale
+      fftArray[FFTchannel] = (reading[FFTchannel] * scale[sensitivity]) * eq[FFTchannel]; // scale
       limit(fftArray[FFTchannel]);
 }
 
