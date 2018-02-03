@@ -42,8 +42,8 @@ int prevrmsReading = 1;   // store the previous RMS reading
 
 
 //LED Variables
-#define DATA_PIN    7 // MOSI - Green on my strand
-#define CLK_PIN     14 // SCK - Blue on my strand
+#define DATA_PIN    2 // MOSI - Green on my strand
+#define CLK_PIN     3 // SCK - Blue on my strand
 #define LED_TYPE    APA102
 #define COLOR_ORDER BRG
 #define NUM_LEDS    115
@@ -117,7 +117,7 @@ void updateLEDs() {
 
   leds[dot].setRGB( 0, 0, 255);             // set the dot as a blue pixel
 
-  if (++dotCount >= 3) {                   // make the dot fall slowly
+  if (++dotCount >= 30) {                   // make the dot fall slowly
     dotCount = 0;
     if (dot > 1) {
       dot--;
