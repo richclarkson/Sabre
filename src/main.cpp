@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <StateManager.h>
 #include <TapPressButton.h>
+#include <AnalyzeSound.h>
 
 TapPressButton capSensor;
 StateManager mainState;
@@ -13,14 +14,18 @@ unsigned long loopTime;
 bool isTouch;
 
 // Sound Library hooks & data
-float soundLevel;
-const int FFT_RESOLUTION = 256;
-float fftArray[FFT_RESOLUTION / 2];
+int soundLevel;
+int fftArray [8];
+int fftSingle;
 
-void analyzeFFT() {
+void analyzeFFTall() {
   // run FFT analysis function
   // store the resulting data to the `FFTArray` variable
 }
+
+void analyzeFFT() {
+  // run FFT analysis function
+  // store resulting value to the `fftSingle` variable
 
 void analyzeLevel() {
   // run Level analysis function
