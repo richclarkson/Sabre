@@ -67,7 +67,7 @@ float eq[8] = {
 #define DATA_PIN    2 // MOSI - Green on my strand
 #define CLK_PIN     3 // SCK - Blue on my strand
 #define LED_TYPE    APA102
-#define COLOR_ORDER BRG
+#define COLOR_ORDER BGR
 #define NUM_LEDS    115
 CRGB leds[NUM_LEDS];
 
