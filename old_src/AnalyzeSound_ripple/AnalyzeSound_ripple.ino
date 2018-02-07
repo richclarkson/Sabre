@@ -214,27 +214,6 @@ void musicmode3()    // Ripple
 }
 
 
-//void altmusicmode3()    // Ripple
-//{ 
-//
-//  //turnoffLEDs();
-//  fadeToBlackBy( leds, NUM_LEDS, 1);
-//  
-//  if (fft1024.available()) {
-//    for (int i = 0; i < NUM_LEDS; i++) {
-//  fullreading[i] =  fft1024.read(i);
-//  fullfftArray[i] = (fullreading[i] * (scale[sensitivity] * 3)); // scale
-//  
-//  if (fullfftArray[i] > 255){ fullfftArray[i] = 255; }
-//  if (fullfftArray[i] < 50){ fullfftArray[i] = 0; }
-//  
-//    leds[i] = CHSV( 0, 0, fullfftArray[i]);
-//  }  
-// }
-// FastLED.show();
-//}
-
-
 void turnoffLEDs()
 {
     for (int led = 0; led < NUM_LEDS; led++)        
