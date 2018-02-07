@@ -184,8 +184,8 @@ void updateLEDs() {
 void musicmode3()    // Ripple
 { 
 
-  //fadeToBlackBy( leds, NUM_LEDS, 1);
-  turnoffLEDs();
+  fadeToBlackBy( leds, NUM_LEDS, 1);
+  //turnoffLEDs();
 
   for (int y = 0; y < 8; y++) // create 8 different LED sections of saber each based on the 8 FFT channels
   {
@@ -207,7 +207,7 @@ void musicmode3()    // Ripple
     {
       leds[led] = CHSV(0, 0, rippleBrightness); // fill in LEDs according to the top and bottom of each section deffined above
     }
-    //blur1d(leds, NUM_LEDS, fftArray[y]);  // blur LEDs for smoother transitions
+    blur1d(leds, NUM_LEDS, fftArray[y]);  // blur LEDs for smoother transitions
   }
 
   FastLED.show();
