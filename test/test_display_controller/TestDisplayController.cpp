@@ -60,6 +60,9 @@ public:
   void resetTimer(unsigned long timerVal) {
     prevTimerVal = timerVal;
   }
+  int getTestPtr(int *val) {
+    return *val;
+  }
 };
 
 StateManager sm;
@@ -158,6 +161,11 @@ void test_timer_val() {
   TEST_ASSERT_TRUE(tdc.hasTimerPassed(1500, 300));
 }
 
+void test_pointer() {
+  int i = 15;
+  TEST_ASSERT_EQUAL(15, tdc.getTestPtr(&i));
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -170,6 +178,7 @@ int main() {
   RUN_TEST(test_display_sensitivity_is_updated_by_state_manager);
   RUN_TEST(test_display_brghtness_is_updated_by_state_manger);
   RUN_TEST(test_child_brightness_setting_is_changed);
+  RUN_TEST(test_pointer);
 
   UNITY_END();
 }
