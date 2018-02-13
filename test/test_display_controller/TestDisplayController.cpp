@@ -89,6 +89,15 @@ void test_display_controller_has_brightness_setting() {
   TEST_ASSERT_EQUAL(4, tdc.getBrightness());
 }
 
+void test_display_channel_is_updated_by_state_manager() {
+  TEST_ASSERT_EQUAL(8, tdc.getChannel());
+  sm.press();
+  sm.tap();
+  sm.press();
+  TEST_ASSERT_EQUAL(0, sm.getChannel());
+  TEST_ASSERT_EQUAL(0, tdc.getChannel());
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -97,6 +106,7 @@ int main() {
   RUN_TEST(test_display_controller_has_channel_setting);
   RUN_TEST(test_display_controller_has_sensitivity_setting);
   RUN_TEST(test_display_controller_has_brightness_setting);
+  RUN_TEST(test_display_channel_is_updated_by_state_manager);
 
   UNITY_END();
 }

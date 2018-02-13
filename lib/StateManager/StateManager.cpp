@@ -68,6 +68,7 @@ void StateManager::advanceChannel() {
   if (this->channel > 8) {
     this->channel = 0;
   }
+  display->setChannel(getChannel());
   // TODO: save this value to EEPROM
 }
 
