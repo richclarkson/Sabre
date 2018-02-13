@@ -77,3 +77,14 @@ void SaberDisplayController::displayFire() {
   whiteFlag = false;
   // add lamp display code here
 }
+
+void SaberDisplayController::setChannel(int val) {
+  DisplayController::setChannel(val);
+  // add channel preview code here
+}
+
+void SaberDisplayController::setBrightness(int val) {
+  DisplayController::setBrightness(val);
+  // add channel preview code here
+}
+
