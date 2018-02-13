@@ -86,6 +86,7 @@ void StateManager::advanceBrightness() {
   if (this->brightness >= 8) {
     this->brightness = 0;
   }
+  display->setBrightness(getBrightness());
   // TODO: save this value to EEPROM
 }
 
