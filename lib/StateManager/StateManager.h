@@ -66,13 +66,13 @@ public:
   virtual void turnOff() {}
   virtual void update(StateManager *sm) {}
 
-  void setChannel(int val) { channel = val; }
+  virtual void setChannel(int val) { channel = val; }
   int getChannel() { return channel; }
 
-  void setSensitivity(int val) { sensitivity = val; }
+  virtual void setSensitivity(int val) { sensitivity = val; }
   int getSensitivity() { return sensitivity; }
 
-  void setBrightness(int val) { brightness = val; }
+  virtual void setBrightness(int val) { brightness = val; }
   int getBrightness() { return brightness; }
 
   virtual void displayFallingDot() {}
