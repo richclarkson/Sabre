@@ -31,6 +31,9 @@ void SaberDisplayController::resetTimer(unsigned long timerVal) {
 
 int SaberDisplayController::getLevel() { return *levelPtr; }
 int SaberDisplayController::getFFT() { return fftPtr; }
+
+//TODO add a way for channel val to select a specific 'channel' from fftArr and rename it lVal
+
 // ===== end input utility functions =================
 
 void SaberDisplayController::turnOff() {
@@ -41,11 +44,11 @@ void SaberDisplayController::turnOff() {
 }
 
 void SaberDisplayController::displayFallingDot() {
-  if (soundLevel > dot) dot = soundLevel; // Keep dot on top of soundLevel
+  if (lVal > dot) dot = lVal; // Keep dot on top of lVal
   if (dot > NUM_LEDS) dot = NUM_LEDS; // Keep dot from going out of frame
   turnoffLEDs();
-  for (int led = 0; led < soundLevel; led++)
-  { // Start by Filling LEDS up to the soundLevel with dim white
+  for (int led = 0; led < lVal; led++)
+  { // Start by Filling LEDS up to the lVal with dim white
     leds[led].setRGB(80, 80, 80);
   }
   leds[dot].setRGB(0, 0, 255);   // Fill in the 'peak' pixel with BLUE
@@ -53,7 +56,7 @@ void SaberDisplayController::displayFallingDot() {
   { //make everything above the dot black
     leds[led].setRGB(0, 0, 0);
   }
-  FastLED.show(); // send data to LEDs to display
+  FastLED.show();
   if (++dotCount >= 60) {   // make the dot fall slowly
     dotCount = 0;
     if (dot > 1) {
@@ -64,11 +67,11 @@ void SaberDisplayController::displayFallingDot() {
 
 void SaberDisplayController::displayMiddleOut() {
   turnoffLEDs();
-  for (int led = (NUM_LEDS - soundLevel) / 2; led < (soundLevel / 2) + (NUM_LEDS / 2); led++)
+  for (int led = (NUM_LEDS - lVal) / 2; led < (lVal / 2) + (NUM_LEDS / 2); led++)
   {
     leds[led].setRGB(50, 50, 50);
   }
-  if (soundLevel <= 0)     // NO SOUND
+  if (lVal <= 0)     // NO SOUND
   {                                    // If no sound (dot = 0)
     turnoffLEDs();
     leds[NUM_LEDS / 2].setRGB(80, 80, 80); // keep center dot illuminated
@@ -77,34 +80,31 @@ void SaberDisplayController::displayMiddleOut() {
 }
 
 void SaberDisplayController::displayRipple() {
-  fadeToBlackBy( leds, NUM_LEDS, 1);
-  //turnoffLEDs();
-
+  fadeToBlackBy( leds, NUM_LEDS, 1);   //turnoffLEDs();
   for (int y = 0; y < 8; y++) // create 8 different LED sections of saber each based on the 8 FFT channels
   {
-    int bottomOfRipple = ((y * 15) + 6) - (fftArray[y] / 10);
+    int bottomOfRipple = ((y * 15) + 6) - (fftArr[y] / 10);
     if (bottomOfRipple <= 0)
     {
       bottomOfRipple = 0;
     }
-    int topOfRipple = ((y * 15) + 6) + (fftArray[y] / 10);
+    int topOfRipple = ((y * 15) + 6) + (fftArr[y] / 10);
     if (topOfRipple >= NUM_LEDS - 1)
     {
       topOfRipple = NUM_LEDS - 1;
     }
-    int rippleBrightness = constrain(fftArray[y] * 3, 0, 254);
+    int rippleBrightness = constrain(fftArr[y] * 3, 0, 254);
     for (int led = bottomOfRipple; led < topOfRipple; led++)
     {
       leds[led] = CHSV(0, 0, rippleBrightness); // fill in LEDs according to the top and bottom of each section deffined above
     }
-    blur1d(leds, NUM_LEDS, fftArray[y]);  // blur LEDs for smoother transitions
+    blur1d(leds, NUM_LEDS, fftArr[y]);  // blur LEDs for smoother transitions
   }
-
   FastLED.show();
 }
 
 void SaberDisplayController::displayBangAndFade() {
-    if (soundLevel > dot){ dot = soundLevel; } // Keep dot on top of soundLevel
+    if (lVal > dot){ dot = lVal; } // Keep dot on top of lVal
   if (dot > NUM_LEDS){ dot = NUM_LEDS-1;  }  // Keep dot from going out of frame
   for (int led = 0; led < NUM_LEDS; led++)
   {
@@ -121,11 +121,11 @@ void SaberDisplayController::displayBangAndFade() {
 
 void SaberDisplayController::displayRainbow() {
     fill_gradient(leds, 0, CHSV(96, 255,255) , NUM_LEDS, CHSV(0,255,255), SHORTEST_HUES);
-    for (int led = soundLevel; led < NUM_LEDS; led++)        
+    for (int led = lVal; led < NUM_LEDS; led++)        
   { //turn off LEDs
     leds[led] = CHSV( 100, 0, 0);
   }
-  if (soundLevel <= 0)  { turnoffLEDs();  } // If no sound (dot = 0)
+  if (lVal <= 0)  { turnoffLEDs();  } // If no sound (dot = 0)
   FastLED.show(); 
 }
 
