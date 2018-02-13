@@ -77,11 +77,16 @@ void test_each_state_calls_its_display_function() {
   TEST_ASSERT_EQUAL(0, tdc.getTestVal());
 }
 
+void test_display_controller_has_channel_setting() {
+  TEST_ASSERT_EQUAL(8, tdc.getChannel());
+}
+
 int main() {
   UNITY_BEGIN();
 
   RUN_TEST(test_normal_off_system_state_calls_display_function);
   RUN_TEST(test_each_state_calls_its_display_function);
+  RUN_TEST(test_display_controller_has_channel_setting);
 
   UNITY_END();
 }

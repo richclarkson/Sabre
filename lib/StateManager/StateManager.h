@@ -57,9 +57,15 @@ public:
 };
 
 class DisplayController {
+protected:
+  int channel;
+
 public:
   virtual void turnOff() {}
   virtual void update(StateManager *sm) {}
+
+  void setChannel(int val) { channel = val; }
+  int getChannel() { return channel; }
 
   virtual void displayFallingDot() {}
   virtual void displayMiddleOut() {}
