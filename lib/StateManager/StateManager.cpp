@@ -7,6 +7,7 @@ StateManager::StateManager() {}
 StateManager::StateManager(State *starting, State *startingColor) {
   setCurrent(starting);
   setColor(startingColor);
+  registerDisplayController(new DisplayController);
   channel = 8;
   sensitivity = 4;
   brightness = 4;
