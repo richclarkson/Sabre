@@ -32,6 +32,10 @@ public:
   void setLevelPtr(float *lVal);
   void setFFTArray(float *fftArr);
 
+  void setChannel(int val);
+  void setSensitivity(int val);
+  void setBrightness(int val);
+
   int getLevel();
   int getFFT() { return fftPtr; }
 };
