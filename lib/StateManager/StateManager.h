@@ -60,6 +60,7 @@ class DisplayController {
 protected:
   int channel;
   int sensitivity;
+  int brightness;
 
 public:
   virtual void turnOff() {}
@@ -70,6 +71,9 @@ public:
 
   void setSensitivity(int val) { sensitivity = val; }
   int getSensitivity() { return sensitivity; }
+
+  void setBrightness(int val) { brightness = val; }
+  int getBrightness() { return brightness; }
 
   virtual void displayFallingDot() {}
   virtual void displayMiddleOut() {}

@@ -38,6 +38,7 @@ void StateManager::registerDisplayController(DisplayController *dc) {
   display = dc;
   dc->setChannel(8);
   dc->setSensitivity(4);
+  dc->setBrightness(4);
 }
 
 void StateManager::registerFFT(void (*cb)(), float *fftArrayPointer) {

@@ -85,6 +85,10 @@ void test_display_controller_has_sensitivity_setting() {
   TEST_ASSERT_EQUAL(4, tdc.getSensitivity());
 }
 
+void test_display_controller_has_brightness_setting() {
+  TEST_ASSERT_EQUAL(4, tdc.getBrightness());
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -92,6 +96,7 @@ int main() {
   RUN_TEST(test_each_state_calls_its_display_function);
   RUN_TEST(test_display_controller_has_channel_setting);
   RUN_TEST(test_display_controller_has_sensitivity_setting);
+  RUN_TEST(test_display_controller_has_brightness_setting);
 
   UNITY_END();
 }
