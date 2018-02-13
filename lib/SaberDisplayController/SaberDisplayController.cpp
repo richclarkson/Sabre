@@ -34,27 +34,99 @@ int SaberDisplayController::getFFT() { return fftPtr; }
 // ===== end input utility functions =================
 
 void SaberDisplayController::turnOff() {
-  // include the code to turn off the LEDs here
+      for (int led = 0; led < NUM_LEDS; led++)        
+  { //turn off LEDs
+    leds[led] = CHSV( 100, 0, 0);
+  }
 }
 
 void SaberDisplayController::displayFallingDot() {
-  // add state display code here
+  if (soundLevel > dot) dot = soundLevel; // Keep dot on top of soundLevel
+  if (dot > NUM_LEDS) dot = NUM_LEDS; // Keep dot from going out of frame
+  turnoffLEDs();
+  for (int led = 0; led < soundLevel; led++)
+  { // Start by Filling LEDS up to the soundLevel with dim white
+    leds[led].setRGB(80, 80, 80);
+  }
+  leds[dot].setRGB(0, 0, 255);   // Fill in the 'peak' pixel with BLUE
+  for (int led = dot + 1; led < NUM_LEDS; led++)
+  { //make everything above the dot black
+    leds[led].setRGB(0, 0, 0);
+  }
+  FastLED.show(); // send data to LEDs to display
+  if (++dotCount >= 60) {   // make the dot fall slowly
+    dotCount = 0;
+    if (dot > 1) {
+      dot--;
+    }
+  }
 }
 
 void SaberDisplayController::displayMiddleOut() {
-  // add state display code here
+  turnoffLEDs();
+  for (int led = (NUM_LEDS - soundLevel) / 2; led < (soundLevel / 2) + (NUM_LEDS / 2); led++)
+  {
+    leds[led].setRGB(50, 50, 50);
+  }
+  if (soundLevel <= 0)     // NO SOUND
+  {                                    // If no sound (dot = 0)
+    turnoffLEDs();
+    leds[NUM_LEDS / 2].setRGB(80, 80, 80); // keep center dot illuminated
+  }
+  FastLED.show(); // send data to LEDs to display
 }
 
 void SaberDisplayController::displayRipple() {
-  // add state display code here
+  fadeToBlackBy( leds, NUM_LEDS, 1);
+  //turnoffLEDs();
+
+  for (int y = 0; y < 8; y++) // create 8 different LED sections of saber each based on the 8 FFT channels
+  {
+    int bottomOfRipple = ((y * 15) + 6) - (fftArray[y] / 10);
+    if (bottomOfRipple <= 0)
+    {
+      bottomOfRipple = 0;
+    }
+    int topOfRipple = ((y * 15) + 6) + (fftArray[y] / 10);
+    if (topOfRipple >= NUM_LEDS - 1)
+    {
+      topOfRipple = NUM_LEDS - 1;
+    }
+    int rippleBrightness = constrain(fftArray[y] * 3, 0, 254);
+    for (int led = bottomOfRipple; led < topOfRipple; led++)
+    {
+      leds[led] = CHSV(0, 0, rippleBrightness); // fill in LEDs according to the top and bottom of each section deffined above
+    }
+    blur1d(leds, NUM_LEDS, fftArray[y]);  // blur LEDs for smoother transitions
+  }
+
+  FastLED.show();
 }
 
 void SaberDisplayController::displayBangAndFade() {
-  // add state display code here
+    if (soundLevel > dot){ dot = soundLevel; } // Keep dot on top of soundLevel
+  if (dot > NUM_LEDS){ dot = NUM_LEDS-1;  }  // Keep dot from going out of frame
+  for (int led = 0; led < NUM_LEDS; led++)
+  {
+    leds[led] = CHSV( 100, 0, dot);
+  }
+  FastLED.show();
+  if (++dotCount >= 10) {      // make the dot fall slowly
+    dotCount = 0;
+    if (dot > 5) {
+      dot--;
+    }
+  }
 }
 
 void SaberDisplayController::displayRainbow() {
-  // add state display code here
+    fill_gradient(leds, 0, CHSV(96, 255,255) , NUM_LEDS, CHSV(0,255,255), SHORTEST_HUES);
+    for (int led = soundLevel; led < NUM_LEDS; led++)        
+  { //turn off LEDs
+    leds[led] = CHSV( 100, 0, 0);
+  }
+  if (soundLevel <= 0)  { turnoffLEDs();  } // If no sound (dot = 0)
+  FastLED.show(); 
 }
 
 // Lamp Mode Displays
