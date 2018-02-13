@@ -9,10 +9,20 @@ using namespace std;
 
 class TestDisplayController : public DisplayController {
   int testValue;
+  int testBrightnessVal;
 
 public:
-  TestDisplayController() { testValue = 0; }
+  TestDisplayController() { 
+    testValue = 0; 
+    testBrightnessVal = 0;
+  }
+  void setBrightness(int val) {
+    cout << "\nBB: " << val << "\n";
+    DisplayController::setBrightness(val);
+    testBrightnessVal = val;
+  }
   int getTestVal() { return testValue; }
+  int getTestBrightnessVal() { return testBrightnessVal; }
   void turnOff() {
     testValue = 0;
   }
@@ -117,6 +127,17 @@ void test_display_brghtness_is_updated_by_state_manger() {
   TEST_ASSERT_EQUAL(5, tdc.getBrightness());
 }
 
+void test_child_brightness_setting_is_changed() {
+  TEST_ASSERT_EQUAL(4, tdc.getTestBrightnessVal());
+  sm.press();
+  sm.tap();
+  sm.tap();
+  sm.tap();
+  sm.press();
+  TEST_ASSERT_EQUAL(5, tdc.getBrightness());
+  TEST_ASSERT_EQUAL(5, tdc.getTestBrightnessVal());
+}
+
 int main() {
   UNITY_BEGIN();
 
@@ -128,6 +149,7 @@ int main() {
   RUN_TEST(test_display_channel_is_updated_by_state_manager);
   RUN_TEST(test_display_sensitivity_is_updated_by_state_manager);
   RUN_TEST(test_display_brghtness_is_updated_by_state_manger);
+  RUN_TEST(test_child_brightness_setting_is_changed);
 
   UNITY_END();
 }
