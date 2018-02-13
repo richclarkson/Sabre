@@ -46,7 +46,7 @@ void SaberDisplayController::turnOff() {
 void SaberDisplayController::displayFallingDot() {
   if (lVal > dot) dot = lVal; // Keep dot on top of lVal
   if (dot > NUM_LEDS) dot = NUM_LEDS; // Keep dot from going out of frame
-  turnoffLEDs();
+  turnOff();
   for (int led = 0; led < lVal; led++)
   { // Start by Filling LEDS up to the lVal with dim white
     leds[led].setRGB(80, 80, 80);
@@ -66,21 +66,21 @@ void SaberDisplayController::displayFallingDot() {
 }
 
 void SaberDisplayController::displayMiddleOut() {
-  turnoffLEDs();
+  turnOff();
   for (int led = (NUM_LEDS - lVal) / 2; led < (lVal / 2) + (NUM_LEDS / 2); led++)
   {
     leds[led].setRGB(50, 50, 50);
   }
   if (lVal <= 0)     // NO SOUND
   {                                    // If no sound (dot = 0)
-    turnoffLEDs();
+    turnOff();
     leds[NUM_LEDS / 2].setRGB(80, 80, 80); // keep center dot illuminated
   }
   FastLED.show(); // send data to LEDs to display
 }
 
 void SaberDisplayController::displayRipple() {
-  fadeToBlackBy( leds, NUM_LEDS, 1);   //turnoffLEDs();
+  fadeToBlackBy( leds, NUM_LEDS, 1);   //turnOff();
   for (int y = 0; y < 8; y++) // create 8 different LED sections of saber each based on the 8 FFT channels
   {
     int bottomOfRipple = ((y * 15) + 6) - (fftArr[y] / 10);
@@ -125,31 +125,39 @@ void SaberDisplayController::displayRainbow() {
   { //turn off LEDs
     leds[led] = CHSV( 100, 0, 0);
   }
-  if (lVal <= 0)  { turnoffLEDs();  } // If no sound (dot = 0)
+  if (lVal <= 0)  { turnOff();  } // If no sound (dot = 0)
   FastLED.show(); 
 }
 
 // Lamp Mode Displays
 void SaberDisplayController::displayNeon() {
   whiteFlag = false;
-  // add lamp display code here
+  rainbow(0, NUM_LEDS, 0.1);
 }
 
 void SaberDisplayController::displayWhite() {
   if (!whiteFlag) {
-    // add lamp display code here
+      for (int led = 0; led < NUM_LEDS; led++) {
+        leds[led].setRGB( 150, 150, 150);
+      }
+      FastLED.show();
     whiteFlag = true;
   }
 }
 
 void SaberDisplayController::displayOmbre() {
   whiteFlag = false;
-  // add lamp display code here
+  rainbow(0, NUM_LEDS, 1);
 }
 
 void SaberDisplayController::displayFire() {
   whiteFlag = false;
-  // add lamp display code here
+  for (int led = 0; led < 100; led++) { 
+    random16_add_entropy( random());
+      Fire2012();
+      FastLED.show(); // display this frame
+      FastLED.delay(1000 / 60);
+  }
 }
 
 void SaberDisplayController::setChannel(int val) {
@@ -191,4 +199,50 @@ void SaberDisplayController::displayBangAndFadePreview() {
 void SaberDisplayController::displayRainbowPreview() {
   // place blocking display code here, using delays to get through the whole
   // animation.
+}
+
+
+
+void SaberDisplayController::rainbow(int startPos, int number, float deltaHue) {
+  
+    if (++rainbowCounter >= timeSpeed) {
+      gHue++;
+      rainbowCounter = 0;
+    } // slowly cycle the "base color" through the rainbow
+  
+    fill_rainbow( &(leds[startPos]), number, gHue, deltaHue);
+    FastLED.show();
+  }
+
+void SaberDisplayController::Fire2012()
+  // Array of temperature readings at each simulation cell
+  static byte heat[NUM_LEDS];
+
+  // Step 1.  Cool down every cell a little
+    for( int i = 0; i < NUM_LEDS; i++) {
+      heat[i] = qsub8( heat[i],  random8(0, ((COOLING * 10) / NUM_LEDS) + 2));
+    }
+  
+    // Step 2.  Heat from each cell drifts 'up' and diffuses a little
+    for( int k= NUM_LEDS - 1; k >= 2; k--) {
+      heat[k] = (heat[k - 1] + heat[k - 2] + heat[k - 2] ) / 3;
+    }
+    
+    // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
+    if( random8() < SPARKING ) {
+      int y = random8(7);
+      heat[y] = qadd8( heat[y], random8(160,255) );
+    }
+
+    // Step 4.  Map from heat cells to LED colors
+    for( int j = 0; j < NUM_LEDS; j++) {
+      CRGB color = HeatColor( heat[j]);
+      int pixelnumber;
+      if( gReverseDirection ) {
+        pixelnumber = (NUM_LEDS-1) - j;
+      } else {
+        pixelnumber = j;
+      }
+      leds[pixelnumber] = color;
+    }
 }
