@@ -81,12 +81,17 @@ void test_display_controller_has_channel_setting() {
   TEST_ASSERT_EQUAL(8, tdc.getChannel());
 }
 
+void test_display_controller_has_sensitivity_setting() {
+  TEST_ASSERT_EQUAL(4, tdc.getSensitivity());
+}
+
 int main() {
   UNITY_BEGIN();
 
   RUN_TEST(test_normal_off_system_state_calls_display_function);
   RUN_TEST(test_each_state_calls_its_display_function);
   RUN_TEST(test_display_controller_has_channel_setting);
+  RUN_TEST(test_display_controller_has_sensitivity_setting);
 
   UNITY_END();
 }
