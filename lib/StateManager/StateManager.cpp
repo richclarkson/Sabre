@@ -36,9 +36,9 @@ int StateManager::getBrightness() { return brightness; }
 //=== dependency injection ===
 void StateManager::registerDisplayController(DisplayController *dc) {
   display = dc;
-  dc->setChannel(8);
-  dc->setSensitivity(4);
-  dc->setBrightness(4);
+  dc->setChannel(getChannel());
+  dc->setSensitivity(getSensitivity());
+  dc->setBrightness(getBrightness());
 }
 
 void StateManager::registerFFT(void (*cb)(), float *fftArrayPointer) {
