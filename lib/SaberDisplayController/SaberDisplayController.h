@@ -6,6 +6,8 @@
 class SaberDisplayController : public DisplayController {
   bool whiteFlag;
   unsigned long prevTimerVal;
+  float* levelPtr;
+  float* fftPtr;
 
 public:
   SaberDisplayController();
@@ -27,6 +29,11 @@ public:
   void displayOmbre();
   void displayFire();
 
+  void setLevelPtr(float *lVal);
+  void setFFTArray(float *fftArr);
+
+  int getLevel();
+  int getFFT() { return fftPtr; }
 };
 
 #endif

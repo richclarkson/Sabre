@@ -25,6 +25,12 @@ void SaberDisplayController::setBrightness(int val) {
   FastLED.setBrightness(val);
 }
 
+void SaberDisplayController::setLevelPtr(float *lVal) { lVal = levelPtr; }
+void SaberDisplayController::setFFTArray(float *fftArr) { fftArr = fftPtr; }
+
+int SaberDisplayController::getLevel() { return *levelPtr; }
+int SaberDisplayController::getFFT() { return fftPtr; }
+
 void SaberDisplayController::turnOff() {
   // include the code to turn off the LEDs here
 }
