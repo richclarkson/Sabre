@@ -77,6 +77,7 @@ void StateManager::advanceSensitivity() {
   if (this->sensitivity >= 8) {
     this->sensitivity = 0;
   }
+  display->setSensitivity(getSensitivity());
   // TODO: save this value to EEPROM
 }
 
