@@ -17,7 +17,7 @@ public:
     testBrightnessVal = 0;
   }
   void setBrightness(int val) {
-    cout << "\nBB: " << val << "\n";
+    // cout << "\nBB: " << val << "\n";
     DisplayController::setBrightness(val);
     testBrightnessVal = val;
   }
