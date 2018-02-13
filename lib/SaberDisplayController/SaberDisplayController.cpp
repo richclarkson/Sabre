@@ -4,17 +4,20 @@
 
 SaberDisplayController::SaberDisplayController() {
   whiteFlag = false;
-  timerVal = 0;
   prevTimerVal = 0;
 }
 
-bool SaberDisplayController::isTimeFrame(unsigned long newTimerVal, unsigned long timeFrame) {
-  timerVal += newTimerVal;
-  if (timerVal - prevTimerVal >= timeFrame) {
-    prevTimerVal = timerVal;
+bool SaberDisplayController::isTimerUp(unsigned long timerVal,
+                                       unsigned long timerLength) {
+  if (timerVal = prevTimerVal > timerLength) {
+    resetTimer(timerVal);
     return true;
   }
   return false;
+}
+
+void SaberDisplayController::resetTimer(unsigned long timerVal) {
+  prevTimerVal = timerVal;
 }
 
 void SaberDisplayController::setBrightness(int val) {
