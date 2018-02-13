@@ -10,11 +10,13 @@ using namespace std;
 class TestDisplayController : public DisplayController {
   int testValue;
   int testBrightnessVal;
+  unsigned long prevTimerVal;
 
 public:
   TestDisplayController() { 
     testValue = 0; 
     testBrightnessVal = 0;
+    prevTimerVal = 0;
   }
   void setBrightness(int val) {
     // cout << "\nBB: " << val << "\n";
@@ -47,6 +49,17 @@ public:
   void displayWhite() { testValue = 20; }
   void displayOmbre() { testValue = 30; }
   void displayFire() { testValue = 40; }
+  
+  bool hasTimerPassed(unsigned long timerVal, unsigned long timerLength) {
+    if (timerVal - prevTimerVal > timerLength) {
+      resetTimer(timerVal);
+      return true;
+    }
+    return false;
+  }
+  void resetTimer(unsigned long timerVal) {
+    prevTimerVal = timerVal;
+  }
 };
 
 StateManager sm;
@@ -136,6 +149,13 @@ void test_child_brightness_setting_is_changed() {
   sm.press();
   TEST_ASSERT_EQUAL(5, tdc.getBrightness());
   TEST_ASSERT_EQUAL(5, tdc.getTestBrightnessVal());
+}
+
+void test_timer_val() {
+  TEST_ASSERT_FALSE(tdc.hasTimerPassed(100, 300));
+  tdc.resetTimer(1000);
+  TEST_ASSERT_FALSE(tdc.hasTimerPassed(1100, 300));
+  TEST_ASSERT_TRUE(tdc.hasTimerPassed(1500, 300));
 }
 
 int main() {
