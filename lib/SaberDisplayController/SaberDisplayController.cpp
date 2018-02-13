@@ -1,5 +1,6 @@
 #include "SaberDisplayController.h"
-#include "FastLED.h"
+#include <Adruino.h>
+#include <FastLED.h>
 
 SaberDisplayController::SaberDisplayController() {
   whiteFlag = false;
@@ -14,6 +15,11 @@ bool SaberDisplayController::isTimeFrame(unsigned long newTimerVal, unsigned lon
     return true;
   }
   return false;
+}
+
+void SaberDisplayController::setBrightness(int val) {
+  DisplayController::setBrightness(val);
+  FastLED.setBrightness(val);
 }
 
 void SaberDisplayController::turnOff() {
