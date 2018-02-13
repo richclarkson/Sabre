@@ -90,3 +90,33 @@ void SaberDisplayController::setBrightness(int val) {
   // add channel preview code here
 }
 
+/*
+Music Mode Preview Methods; These will likely change dramatically, but drop preview methods in here for now so I can figure out the best way to handle these.
+
+It's a better idea to run these from the normal display chain, but I haven't quite figured out the best way yet. If I can't figure it out we can call these from the State constructors in the short term.
+
+Make sure these run as blocking loops, using Arduino `delay()` to control timing. These won't be updateable mid-animation but they will display the preview.
+*/
+
+void SaberDisplayController::displayFallingDotPreview() {
+  // place blocking display code here, using delays to get through the whole animation.
+}
+
+void SaberDisplayController::displayMiddleOutPreview() {
+  // place blocking display code here, using delays to get through the whole animation.
+}
+
+void SaberDisplayController::displayRipplePreview() {
+  // place blocking display code here, using delays to get through the whole
+  // animation.
+}
+
+void SaberDisplayController::displayBangAndFadePreview() {
+  // place blocking display code here, using delays to get through the whole
+  // animation.
+}
+
+void SaberDisplayController::displayRainbowPreview() {
+  // place blocking display code here, using delays to get through the whole
+  // animation.
+}
