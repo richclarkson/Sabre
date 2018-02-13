@@ -32,6 +32,8 @@ public:
   void setLevelPtr(float *lVal);
   void setFFTArray(float *fftArr);
 
+  void setBrightness(int val);
+
   int getLevel();
   int getFFT() { return fftPtr; }
 };
