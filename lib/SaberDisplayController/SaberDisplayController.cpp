@@ -7,6 +7,15 @@ SaberDisplayController::SaberDisplayController() {
   prevTimerVal = 0;
 }
 
+void SaberDisplayController::setBrightness(int val) {
+  DisplayController::setBrightness(val);
+  FastLED.setBrightness(val);
+}
+
+void SaberDisplayController::setLevelPtr(float *lVal) { lVal = levelPtr; }
+void SaberDisplayController::setFFTArray(float *fftArr) { fftArr = fftPtr; }
+
+// get input values with these functions =============
 bool SaberDisplayController::isTimerUp(unsigned long timerVal,
                                        unsigned long timerLength) {
   if (timerVal = prevTimerVal > timerLength) {
@@ -20,16 +29,9 @@ void SaberDisplayController::resetTimer(unsigned long timerVal) {
   prevTimerVal = timerVal;
 }
 
-void SaberDisplayController::setBrightness(int val) {
-  DisplayController::setBrightness(val);
-  FastLED.setBrightness(val);
-}
-
-void SaberDisplayController::setLevelPtr(float *lVal) { lVal = levelPtr; }
-void SaberDisplayController::setFFTArray(float *fftArr) { fftArr = fftPtr; }
-
 int SaberDisplayController::getLevel() { return *levelPtr; }
 int SaberDisplayController::getFFT() { return fftPtr; }
+// ===== end input utility functions =================
 
 void SaberDisplayController::turnOff() {
   // include the code to turn off the LEDs here
