@@ -29,6 +29,12 @@ public:
   void displayOmbre();
   void displayFire();
 
+  void displayFallingDotPreview();
+  void displayMiddleOutPreview();
+  void displayRipplePreview();
+  void displayBangAndFadePreview();
+  void displayRainbowPreview();
+
   void setLevelPtr(float *lVal);
   void setFFTArray(float *fftArr);
 

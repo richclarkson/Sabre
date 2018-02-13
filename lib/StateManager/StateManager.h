@@ -85,6 +85,12 @@ public:
   virtual void displayWhite() {}
   virtual void displayOmbre() {}
   virtual void displayFire() {}
+
+  virtual void displayFallingDotPreview() {}
+  virtual void displayMiddleOutPreview() {}
+  virtual void displayRipplePreview() {}
+  virtual void displayBangAndFadePreview() {}
+  virtual void displayRainbowPreview() {}
 };
 
 #endif
