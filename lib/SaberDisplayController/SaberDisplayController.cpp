@@ -33,6 +33,10 @@ int SaberDisplayController::getLevel() { return *levelPtr; }
 int SaberDisplayController::getFFT() { return fftPtr; }
 
 //TODO add a way for channel val to select a specific 'channel' from fftArr and rename it lVal
+// ** There are getter methods for channel, brightness, and sensitivity, defined in the base class but avilable to this one. The values they return are updated whenever the values are changed by the StateManager, on a button press().
+// getChannel()
+// getSensitivity()
+// getBrightness()
 
 // ===== end input utility functions =================
 
