@@ -43,7 +43,7 @@ public:
   void setBrightness(int val);
 
   float getLevel();
-  float* getFFT() { return fftPtr; }
+  float* getFFT();
 };
 
 #endif
