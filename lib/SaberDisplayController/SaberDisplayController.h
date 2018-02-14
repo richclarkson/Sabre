@@ -42,8 +42,8 @@ public:
   void setSensitivity(int val);
   void setBrightness(int val);
 
-  int getLevel();
-  int getFFT() { return fftPtr; }
+  float getLevel();
+  float* getFFT() { return fftPtr; }
 };
 
 #endif
