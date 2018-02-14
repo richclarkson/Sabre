@@ -44,10 +44,10 @@ void SaberDisplayController::turnOff() {
 }
 
 void SaberDisplayController::displayFallingDot() {
-  if (lVal > dot) dot = lVal; // Keep dot on top of lVal
+  if (getLevel() > dot) dot = getLevel(); // Keep dot on top of lVal
   if (dot > NUM_LEDS) dot = NUM_LEDS; // Keep dot from going out of frame
   turnOff();
-  for (int led = 0; led < lVal; led++)
+  for (int led = 0; led < getLevel(); led++)
   { // Start by Filling LEDS up to the lVal with dim white
     leds[led].setRGB(80, 80, 80);
   }
@@ -67,11 +67,11 @@ void SaberDisplayController::displayFallingDot() {
 
 void SaberDisplayController::displayMiddleOut() {
   turnOff();
-  for (int led = (NUM_LEDS - lVal) / 2; led < (lVal / 2) + (NUM_LEDS / 2); led++)
+  for (int led = (NUM_LEDS - getLevel()) / 2; led < (getLevel() / 2) + (NUM_LEDS / 2); led++)
   {
     leds[led].setRGB(50, 50, 50);
   }
-  if (lVal <= 0)     // NO SOUND
+  if (getLevel() <= 0)     // NO SOUND
   {                                    // If no sound (dot = 0)
     turnOff();
     leds[NUM_LEDS / 2].setRGB(80, 80, 80); // keep center dot illuminated
@@ -104,7 +104,7 @@ void SaberDisplayController::displayRipple() {
 }
 
 void SaberDisplayController::displayBangAndFade() {
-    if (lVal > dot){ dot = lVal; } // Keep dot on top of lVal
+    if (getLevel() > dot){ dot = getLevel(); } // Keep dot on top of lVal
   if (dot > NUM_LEDS){ dot = NUM_LEDS-1;  }  // Keep dot from going out of frame
   for (int led = 0; led < NUM_LEDS; led++)
   {
@@ -121,11 +121,11 @@ void SaberDisplayController::displayBangAndFade() {
 
 void SaberDisplayController::displayRainbow() {
     fill_gradient(leds, 0, CHSV(96, 255,255) , NUM_LEDS, CHSV(0,255,255), SHORTEST_HUES);
-    for (int led = lVal; led < NUM_LEDS; led++)        
+    for (int led = getLevel(); led < NUM_LEDS; led++)        
   { //turn off LEDs
     leds[led] = CHSV( 100, 0, 0);
   }
-  if (lVal <= 0)  { turnOff();  } // If no sound (dot = 0)
+  if (getLevel() <= 0)  { turnOff();  } // If no sound (dot = 0)
   FastLED.show(); 
 }
 
