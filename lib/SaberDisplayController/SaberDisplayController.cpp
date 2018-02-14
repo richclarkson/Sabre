@@ -83,22 +83,22 @@ void SaberDisplayController::displayRipple() {
   fadeToBlackBy( leds, NUM_LEDS, 1);   //turnOff();
   for (int y = 0; y < 8; y++) // create 8 different LED sections of saber each based on the 8 FFT channels
   {
-    int bottomOfRipple = ((y * 15) + 6) - (fftArr[y] / 10);
+    int bottomOfRipple = ((y * 15) + 6) - (getFFT()[y] / 10);
     if (bottomOfRipple <= 0)
     {
       bottomOfRipple = 0;
     }
-    int topOfRipple = ((y * 15) + 6) + (fftArr[y] / 10);
+    int topOfRipple = ((y * 15) + 6) + (getFFT()[y] / 10);
     if (topOfRipple >= NUM_LEDS - 1)
     {
       topOfRipple = NUM_LEDS - 1;
     }
-    int rippleBrightness = constrain(fftArr[y] * 3, 0, 254);
+    int rippleBrightness = constrain(getFFT()[y] * 3, 0, 254);
     for (int led = bottomOfRipple; led < topOfRipple; led++)
     {
       leds[led] = CHSV(0, 0, rippleBrightness); // fill in LEDs according to the top and bottom of each section deffined above
     }
-    blur1d(leds, NUM_LEDS, fftArr[y]);  // blur LEDs for smoother transitions
+    blur1d(leds, NUM_LEDS, getFFT()[y]);  // blur LEDs for smoother transitions
   }
   FastLED.show();
 }
