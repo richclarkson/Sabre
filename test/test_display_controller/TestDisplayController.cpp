@@ -75,31 +75,31 @@ void setUp() {
 }
 
 void test_normal_off_system_state_calls_display_function() {
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(0, tdc.getTestVal());
 }
 
 void test_each_state_calls_its_display_function() {
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(0, tdc.getTestVal());
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(1, tdc.getTestVal());
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(2, tdc.getTestVal());
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(3, tdc.getTestVal());
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(4, tdc.getTestVal());
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(5, tdc.getTestVal());
   sm.tap();
   sm.tap();
-  sm.update();
+  sm.updateDisplay();
   TEST_ASSERT_EQUAL(0, tdc.getTestVal());
 }
 

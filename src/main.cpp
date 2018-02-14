@@ -48,7 +48,7 @@ void loop() {
   if (capSensor.isPress()) {
     mainState.press();
   }
-  mainState.update();
+  mainState.updateDisplay();
 }
 
 #endif

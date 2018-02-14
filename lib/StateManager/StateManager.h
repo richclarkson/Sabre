@@ -39,7 +39,7 @@ public:
   void press();
   void updateFFT();
   void updateLevel();
-  void update();
+  void updateDisplay();
 };
 
 class State {
