@@ -1,11 +1,14 @@
 #ifndef UNIT_TEST
 
 #include <Arduino.h>
-#include <StateManager.h>
-#include <TapPressButton.h>
+#include "StateManager.h"
+#include "States.h"
+#include "TapPressButton.h"
+#include "SaberDisplayController.h"
 
 TapPressButton capSensor;
 StateManager mainState;
+DisplayController display;
 
 const int capPin = 19;
 const int touchTime = 1000;
@@ -31,9 +34,11 @@ void setup() {
   Serial.begin(9600);
   loopTime = 0;
   capSensor = TapPressButton(50, 300, 1000, 1000);
-  mainState = StateManager();
+  mainState = StateManager(new NormalOff, new Neon);
   mainState.registerFFT(analyzeFFT, &fftArray[0]);
   mainState.registerLevel(analyzeLevel, &soundLevel);
+  display = SaberDisplayController();
+  mainState.registerDisplayController(&display);
   isTouch = false;
 }
 
