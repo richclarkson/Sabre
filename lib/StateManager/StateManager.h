@@ -93,4 +93,22 @@ public:
   virtual void displayRainbowPreview() {}
 };
 
+class SettingController {
+protected:
+  bool settingFlag;
+  int channelVal;
+  int brightnessVal;
+  int sensitivityVal;
+
+public:
+  virtual void setSettingFlag() {}
+  virtual void setChannel() {}
+  virtual void setBrightness() {}
+  virtual void setSensitivity() {}
+  bool isSet() { return settingFlag; }
+  int getChannel() { return channelVal; }
+  int getBrightness() { return brightnessVal; }
+  int getSensitivity() { return sensitivityVal; }
+};
+
 #endif
