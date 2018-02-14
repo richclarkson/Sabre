@@ -18,7 +18,7 @@ void SaberDisplayController::setFFTArray(float *fftArr) { fftArr = fftPtr; }
 // get input values with these functions =============
 bool SaberDisplayController::isTimerUp(unsigned long timerVal,
                                        unsigned long timerLength) {
-  if (timerVal = prevTimerVal > timerLength) {
+  if (timerVal - prevTimerVal > timerLength) {
     resetTimer(timerVal);
     return true;
   }
