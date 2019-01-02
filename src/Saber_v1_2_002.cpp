@@ -413,6 +413,11 @@ void lampMode2()  // White
         leds[led] = CHSV( 100, 0, 255);
       }
       FastLED.show();
+      //delay(10);
+      for (int led = 0; led < NUM_LEDS; led++) {
+        leds[led] = CHSV( 100, 0, 255);
+      }
+      FastLED.show();
       lampMode2Count = 0;
   }
 }
@@ -999,6 +1004,8 @@ void prepareModes()
       Serial.println("Off");
       turnoffLEDs();
       FastLED.show();
+      turnoffLEDs();
+      FastLED.show();
       //isTouch = false;
     }
   } // end normal modes start settings modes
@@ -1040,6 +1047,8 @@ void prepareModes()
       ledCimber = 8;
       indcatorDots = 3;
       Serial.println("Off Setting");
+      turnoffLEDs();
+      FastLED.show();
       turnoffLEDs();
       FastLED.show();
     }
