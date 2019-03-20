@@ -203,8 +203,6 @@ CRGB leds[NUM_LEDS];
 //#define FRAMES_PER_SECOND 120
 
 unsigned int minLEDvalue[NUM_LEDS];
-unsigned int goingUp[NUM_LEDS];
-unsigned int currentValue[NUM_LEDS];
 
 unsigned int currentValueFade = 15;
 unsigned int goingUpFade = 1;
@@ -280,23 +278,6 @@ void setup()
   FastLED.show();
   Serial.begin(9600);
   delay(1000);  // Sanity Delay
-  for (int i = 0; i < NUM_LEDS; i++) {    
-    minLEDvalue[i] = random(1,150);       //fill up the minimum LED value array for Fairy Light Mode
-    currentValue[i] = random(1,254);      //fill up the current value array for Fairy Light Mode
-    goingUp[i] = random(0,1);             //fill up the going up value array for Fairy Light Mode
-  }
-  for (int i = 0; i < 1000; i++) {
-    for (int x = 0; x < NUM_LEDS; x++) {
-      if(goingUp[x] == 1){
-        currentValue[x]++;
-        if (currentValue[x] >= 255) {goingUp[x] = 0;}
-      }
-      else{
-        currentValue[x]--;
-        if (currentValue[x] <= minLEDvalue[x]) {goingUp[x] = 1;}
-      }
-    }
-  }
   for (unsigned int i = 0; i < NUM_LEDS; i++) {    
     minLEDvalue[i] = random(1,50);       //fill up the minimum LED value array for Fairy Light Mode
     currentValueR[i] = random(1,254);      //fill up the current value array for Fairy Light Mode
@@ -830,26 +811,33 @@ void lampMode2()  // Fairy Light
     EVERY_N_MILLISECONDS_I(thistimer,10) {
     thistimer.setPeriod(speedOfAnimation[timeSpeed]);
     for (int x = 0; x < NUM_LEDS; x++) {
-    if(goingUp[x] == 1){
-      currentValue[x]++;
-      if (currentValue[x] >= 255) {goingUp[x] = 0;}
+    if(goingUpR[x] == 1){
+      currentValueR[x]++;
+      if (currentValueR[x] >= 255) {goingUpR[x] = 0;}
     }
     else{
-      currentValue[x]--;
-      if (currentValue[x] <= minLEDvalue[x]) {goingUp[x] = 1;}
+      currentValueR[x]--;
+      if (currentValueR[x] <= minLEDvalue[x]) {goingUpR[x] = 1;}
     }
-    leds[x] = CHSV( wheelH[wheelPosition], wheelS[wheelPosition], currentValue[x]);
+    leds[x] = CHSV( wheelH[wheelPosition], wheelS[wheelPosition], currentValueR[x]);
   }
   rainbowCounter = 0;
+  goingUpR[random(NUM_LEDS)]= random(0,1);    //add some randomness throughout
+  minLEDvalue[random(NUM_LEDS)] = random(1,60);
  }
  FastLED.show();
 }
 
-void lampMode3()  // Ombre
+void lampMode3()  // Fairy 2 but with more random flickering
 {
-  rainbow(0, NUM_LEDS, 5);
-  //rainbow(0, NUM_LEDS, 1);
-  FastLED.show();
+  lampMode1();
+    goingUpR[random(NUM_LEDS)]= random(0,1);    //add some randomness throughout
+    goingUpG[random(NUM_LEDS)]= random(0,1);
+    goingUpB[random(NUM_LEDS)]= random(0,1);
+    minLEDvalue[random(NUM_LEDS)] = random(1,60);
+    currentValueR[random(NUM_LEDS)] = random(1,253); 
+    currentValueG[random(NUM_LEDS)] = random(1,253);
+    currentValueB[random(NUM_LEDS)] = random(1,253);
 }
 
 void lampMode4()  // Breathing Light
