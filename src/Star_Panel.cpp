@@ -1,29 +1,4 @@
 
-/*
-
-  Cloud 2.0
-  2018 Richard Clarkson Studio
-
-  Muisc Modes:
-    1 - Falling Dot: White bar filled to soundpoint with floating blue dot at top.
-    2 - Middle Out: White bar starting at middle filled in both directions to soundpoints
-    3 - Ripple: 8 small Middle out type visualisations stacked from lowest to highest channel.
-    4 - Fade: Whole saber filled to brightness level scaled with soundpoint. Has a minimum brightness point.
-    5 - Rainbow: Rainbow colored bar filled to soundpoint. *Color can be changed by a push and hold.
-
-  Lamp Modes:
-    1 - Neon: Rainbow - similar to musicmode1 but with color and no dot
-    2 - White: Solid white light across whole Saber
-    3 - Ombre: Rainbow color gradient with linear cycle
-    4 - Fire: Visualization of linear fire
-
-    Layout:
-    LED DATA_PIN 3 //MOSI  // Green
-    LED CLK_PIN 4  //SCK  // Blue
-    Button: pin 19
-
-*/
-//#define FASTLED_FORCE_SOFTWARE_SPI 1
 #include <Arduino.h>
 #include <FastLED.h>
 #include <Audio.h>   
@@ -221,18 +196,27 @@ uint8_t gHue = 180;           // rotating "base color" used by many of the patte
 //LED Variables
 #define DATA_PIN 4 //MOSI  //7 Green
 #define CLK_PIN 3  //SCK  //14 Blue
-#define LED_TYPE WS2801 //APA102
+#define LED_TYPE  APA102  // WS2801
 #define COLOR_ORDER RGB
-#define NUM_LEDS 25 //                            NUM_LEDS Setting!
+#define NUM_LEDS 60 //                            NUM_LEDS Setting!
 CRGB leds[NUM_LEDS];
 //#define FRAMES_PER_SECOND 120
 
-int minLEDvalue[NUM_LEDS];
-int goingUp[NUM_LEDS];
-int currentValue[NUM_LEDS];
+unsigned int minLEDvalue[NUM_LEDS];
+unsigned int goingUp[NUM_LEDS];
+unsigned int currentValue[NUM_LEDS];
 
-int currentValueFade = 15;
-int goingUpFade = 1;
+unsigned int currentValueFade = 15;
+unsigned int goingUpFade = 1;
+
+unsigned int goingUpR[NUM_LEDS];
+unsigned int currentValueR[NUM_LEDS];
+
+unsigned int goingUpG[NUM_LEDS];
+unsigned int currentValueG[NUM_LEDS];
+
+unsigned int goingUpB[NUM_LEDS];
+unsigned int currentValueB[NUM_LEDS];
 
 int ledSingle1;
 int ledSingle2;
@@ -310,6 +294,47 @@ void setup()
       else{
         currentValue[x]--;
         if (currentValue[x] <= minLEDvalue[x]) {goingUp[x] = 1;}
+      }
+    }
+  }
+  for (unsigned int i = 0; i < NUM_LEDS; i++) {    
+    minLEDvalue[i] = random(1,50);       //fill up the minimum LED value array for Fairy Light Mode
+    currentValueR[i] = random(1,254);      //fill up the current value array for Fairy Light Mode
+    goingUpR[i] = random(0,1);             //fill up the going up value array for Fairy Light Mode
+    
+    currentValueG[i] = random(1,252);      //fill up the current value array for Fairy Light Mode
+    goingUpG[i] = random(0,1);             //fill up the going up value array for Fairy Light Mode
+
+    currentValueB[i] = random(1,253);      //fill up the current value array for Fairy Light Mode
+    goingUpB[i] = random(0,1);             //fill up the going up value array for Fairy Light Mode
+  }
+  for (unsigned int i = 0; i < 100; i++) {
+    for (unsigned int x = 0; x < NUM_LEDS; x++) {
+      if(goingUpR[x] == 1){
+        currentValueR[x]++;
+        if (currentValueR[x] >= 255) {goingUpR[x] = 0;}
+      }
+      else{
+        currentValueR[x]--;
+        if (currentValueR[x] <= minLEDvalue[x]) {goingUpR[x] = 1;}
+      }
+
+      if(goingUpG[x] == 1){
+        currentValueG[x]++;
+        if (currentValueG[x] >= 255) {goingUpG[x] = 0;}
+      }
+      else{
+        currentValueG[x]--;
+        if (currentValueG[x] <= minLEDvalue[x]) {goingUpG[x] = 1;}
+      }
+
+      if(goingUpB[x] == 1){
+        currentValueB[x]++;
+        if (currentValueB[x] >= 255) {goingUpB[x] = 0;}
+      }
+      else{
+        currentValueB[x]--;
+        if (currentValueB[x] <= minLEDvalue[x]) {goingUpB[x] = 1;}
       }
     }
   }
@@ -758,11 +783,46 @@ void flash(int hue, int saturation)
       flashCount = 0;
 }
 
-void lampMode1()  // Neon
-{
-  rainbow(0, NUM_LEDS, 0.1);
-  //rainbow(0, NUM_LEDS, 0.1);
-  FastLED.show();
+void lampMode1()  // Fairy 2
+{ 
+  EVERY_N_MILLISECONDS_I(thistimer,10)  {
+  thistimer.setPeriod(speedOfAnimation[timeSpeed]);
+    for (unsigned int x = 0; x < NUM_LEDS; x++) {
+    if(goingUpR[x] == 1){
+      currentValueR[x]++;
+      if (currentValueR[x] >= 255) {goingUpR[x] = 0;}
+    }
+    else{
+      currentValueR[x]--;
+      if (currentValueR[x] <= minLEDvalue[x]) {goingUpR[x] = 1;}
+    }
+
+    if(goingUpG[x] == 1){
+      currentValueG[x]++;
+      if (currentValueG[x] >= 255) {goingUpG[x] = 0;}
+    }
+    else{
+      currentValueG[x]--;
+      if (currentValueG[x] <= minLEDvalue[x]) {goingUpG[x] = 1;}
+    }
+
+    if(goingUpB[x] == 1){
+      currentValueB[x]++;
+      if (currentValueB[x] >= 255) {goingUpB[x] = 0;}
+    }
+    else{
+      currentValueB[x]--;
+      if (currentValueB[x] <= minLEDvalue[x]) {goingUpB[x] = 1;}
+    }
+    
+    leds[x].setRGB( currentValueR[x], currentValueG[x], currentValueB[x]);
+  }
+    goingUpR[random(NUM_LEDS)]= random(0,1);    //add some randomness throughout
+    goingUpG[random(NUM_LEDS)]= random(0,1);
+    goingUpB[random(NUM_LEDS)]= random(0,1);
+    minLEDvalue[random(NUM_LEDS)] = random(1,60);
+ }
+    FastLED.show();
 }
 
 void lampMode2()  // Fairy Light
