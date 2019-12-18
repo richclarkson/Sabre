@@ -57,6 +57,8 @@ int totalH = 0;                  // the running total
 int averageH = 0;                // the average
 
 
+const int relayPin = 6;
+int relay = 1;
 
 
 //IR Varriables
@@ -199,8 +201,8 @@ int rainbowCounter = 0;
 uint8_t gHue = 180;           // rotating "base color" used by many of the patterns
 
 //LED Variables
-#define DATA_PIN 4 //MOSI  //7 Green
-#define CLK_PIN 3  //SCK  //14 Blue
+#define DATA_PIN 3 //MOSI  //7 Green
+#define CLK_PIN 4  //SCK  //14 Blue
 #define LED_TYPE WS2801 //APA102
 #define COLOR_ORDER RGB
 CRGB leds[NUM_LEDS];
@@ -279,6 +281,10 @@ void setup()
   FastLED.show();
   Serial.begin(9600);
   delay(1000);  // Sanity Delay
+
+  pinMode (relayPin,OUTPUT);              //relay set up
+  digitalWrite(relayPin, HIGH); 
+
   turnoffLEDs();
   FastLED.show();
   for (int i = 0; i < NUM_LEDS; i++) {    
@@ -439,19 +445,19 @@ void loop()
 
   else if (remoteState == BUTTON_AUP)            // Global brightness
   {
-    if(millis() - variableMillis > 1000){
-        upDownLeftRightReturn();
-     }
-      if(variableState == 0){             
-          if (Bvariable < 8){        Bvariable++;   }
-          FastLED.setBrightness(map(Bvariable,0,8,20,255));
-          fill_solid( leds, NUM_LEDS, CHSV(60,150,(map(Bvariable,0,8,20,250))));
-          FastLED.show();
-          Serial.print("Bvariable = ");
-          Serial.println(Bvariable);
-          EEPROM.update(3, Bvariable);
-        variableState = 1;
-    } 
+    // if(millis() - variableMillis > 1000){
+    //     upDownLeftRightReturn();
+    //  }
+    //   if(variableState == 0){             
+    //       if (Bvariable < 8){        Bvariable++;   }
+    //       FastLED.setBrightness(map(Bvariable,0,8,20,255));
+    //       fill_solid( leds, NUM_LEDS, CHSV(60,150,(map(Bvariable,0,8,20,250))));
+    //       FastLED.show();
+    //       Serial.print("Bvariable = ");
+    //       Serial.println(Bvariable);
+    //       EEPROM.update(3, Bvariable);
+    //     variableState = 1;
+    // } 
   }
 
   else if (remoteState == BUTTON_BUP)            // sensitivity
@@ -489,19 +495,19 @@ void loop()
 
   else if (remoteState == BUTTON_ADOWN)              // Global brightness
   {
-    if(millis() - variableMillis > 1000){
-        upDownLeftRightReturn();
-     }
-      if(variableState == 0){
-          if (Bvariable > 0){     Bvariable--;   }
-          FastLED.setBrightness(map(Bvariable,0,8,20,255));
-          fill_solid( leds, NUM_LEDS, CHSV(60,150,(map(Bvariable,0,8,20,250))));
-          FastLED.show();
-          Serial.print("Bvariable = ");
-          Serial.println(Bvariable);
-          EEPROM.update(3, Bvariable);
-        variableState = 1;
-    }    
+    // if(millis() - variableMillis > 1000){
+    //     upDownLeftRightReturn();
+    //  }
+    //   if(variableState == 0){
+    //       if (Bvariable > 0){     Bvariable--;   }
+    //       FastLED.setBrightness(map(Bvariable,0,8,20,255));
+    //       fill_solid( leds, NUM_LEDS, CHSV(60,150,(map(Bvariable,0,8,20,250))));
+    //       FastLED.show();
+    //       Serial.print("Bvariable = ");
+    //       Serial.println(Bvariable);
+    //       EEPROM.update(3, Bvariable);
+    //     variableState = 1;
+    // }   
   }
 
   else if (remoteState == BUTTON_BDOWN)               // sensitivity
@@ -1160,13 +1166,15 @@ void remote()
             }
             else if (resultCode == BUTTON_AUP) {
               currentButton = 'U';
-                upDownLeftRightRemote();
-                remoteState = BUTTON_AUP;
+              digitalWrite(relayPin, HIGH);
+                //upDownLeftRightRemote();
+                //remoteState = BUTTON_AUP;
               }
             else if (resultCode == BUTTON_ADOWN) {
               currentButton = 'D';
-                upDownLeftRightRemote();
-                remoteState = BUTTON_ADOWN;
+                digitalWrite(relayPin, LOW);
+                //upDownLeftRightRemote();
+                //remoteState = BUTTON_ADOWN;
               }
               else if (resultCode == BUTTON_BUP) {
               currentButton = 'I';
