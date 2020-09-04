@@ -16,7 +16,7 @@ FASTLED_USING_NAMESPACE
 
 
 
-#define NUM_LEDS 25        //     S=10 M=17 L=25 H=50
+#define NUM_LEDS 25                         //     S=10 M=17 L=25 H=50
 
 
 
@@ -168,6 +168,10 @@ static const int binEnd[8] = {   //
 };
 static const int scale[9] = {
   300, 1000, 3000, 6000, 10000, 20000, 30000, 50000, 100000   // sensitivity setting (mulitplication factor)
+  //50, 100, 300, 1000, 3000, 6000, 10000, 20000, 30000   // lower sensitivity for Smart Cloud
+  //50, 90, 200, 500, 1000, 3000, 6000, 12000, 30000   // even lower sensitivity for Smart Cloud
+
+
 };
 float eq[8] = {
   1.0, 1.0, 0.7, 0.5, 1.0, 1.0, 1.5, 2.0   // individual channel scaling factor
@@ -199,8 +203,8 @@ int rainbowCounter = 0;
 uint8_t gHue = 180;           // rotating "base color" used by many of the patterns
 
 //LED Variables
-#define DATA_PIN 4 //MOSI  //7 Green
-#define CLK_PIN 3  //SCK  //14 Blue
+#define DATA_PIN 4 //MOSI  //7 Green  //4
+#define CLK_PIN 3  //SCK  //14 Blue   //3
 #define LED_TYPE WS2801 //APA102
 #define COLOR_ORDER RGB
 CRGB leds[NUM_LEDS];
@@ -321,7 +325,7 @@ void loop()
   if      (remoteState == BUTTON_POWER){
      if (flashCount == 1){  
        flash(100,0); 
-       Serial.print("flash white");
+       //Serial.print("flash white");
        turnoffLEDs();
        FastLED.show(); 
        flashCount = 0; 
@@ -334,7 +338,7 @@ void loop()
   else if (remoteState == BUTTON_A){
      if (flashCountA == 1){  
       flash(220,250);
-      Serial.print("flash pink");
+      //Serial.print("flash pink");
       flashCountA = 0;
     }
 
