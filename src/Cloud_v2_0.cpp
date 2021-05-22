@@ -57,7 +57,7 @@ int totalH = 0;                  // the running total
 int averageH = 0;                // the average
 
 
-const int relayPin = 6;
+const int relayPin = 5;
 int relay = 1;
 
 
@@ -201,8 +201,8 @@ int rainbowCounter = 0;
 uint8_t gHue = 180;           // rotating "base color" used by many of the patterns
 
 //LED Variables
-#define DATA_PIN 3 //MOSI  //7 Green
-#define CLK_PIN 4  //SCK  //14 Blue
+#define DATA_PIN 4 //MOSI  //7 Green
+#define CLK_PIN 3  //SCK  //14 Blue
 #define LED_TYPE WS2801 //APA102
 #define COLOR_ORDER RGB
 CRGB leds[NUM_LEDS];
